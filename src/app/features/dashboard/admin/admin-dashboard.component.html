@@ -1,0 +1,229 @@
+<div class="dashboard-page">
+
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1 class="page-title">Dashboard Overview</h1>
+      <div class="header-search-container">
+        <nz-input-group [nzPrefix]="prefixSearch" class="top-search-bar">
+          <input type="text" nz-input placeholder="Búsqueda global..." [(ngModel)]="topSearchQuery" (keydown.enter)="onGlobalSearch()" />
+        </nz-input-group>
+        <ng-template #prefixSearch><span nz-icon nzType="search"></span></ng-template>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <span nz-icon nzType="bell" nzTheme="outline" class="action-icon" (click)="showNotifications()"></span>
+      <span nz-icon nzType="setting" nzTheme="outline" class="action-icon"></span>
+      
+      <div class="user-profile">
+        <div class="user-info">
+          <span class="user-name">{{ userName }}</span>
+          <span class="user-role">ADMIN</span>
+        </div>
+        <div class="user-avatar"></div>
+      </div>
+      
+      <span nz-icon nzType="logout" nzTheme="outline" class="action-icon action-logout" (click)="logout()"></span>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="dashboard-content">
+    
+    <!-- TOP CARDS -->
+    <div class="cards-grid">
+      <!-- Card 1 -->
+      <div class="stat-card">
+        <div class="card-top">
+          <div class="icon-box icon-blue">
+            <span nz-icon nzType="inbox" nzTheme="outline"></span>
+          </div>
+          <span class="card-label">ACTIVE STOCK</span>
+        </div>
+        <div class="card-body">
+          <h2 class="card-value">{{ activeStockCount | number }}</h2>
+          <p class="card-desc">Total items in inventory</p>
+        </div>
+        <div class="card-footer text-green">
+          <span nz-icon nzType="line-chart" nzTheme="outline"></span> Dynamic Stock Sync
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="stat-card">
+        <div class="card-top">
+          <div class="icon-box icon-green">
+            <span nz-icon nzType="dollar" nzTheme="outline"></span>
+          </div>
+          <span class="card-label">REVENUE TODAY</span>
+        </div>
+        <div class="card-body">
+          <h2 class="card-value text-green">${{ revenueToday | number:'1.2-2' }}</h2>
+          <p class="card-desc">Based on history entries</p>
+        </div>
+        <div class="card-footer">
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: 100%;"></div>
+          </div>
+          <span class="progress-text">Daily sync active</span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="stat-card card-alert">
+        <div class="card-top">
+          <div class="icon-box icon-red">
+            <span nz-icon nzType="warning" nzTheme="outline"></span>
+          </div>
+          <span class="card-label">CRITICAL ALERTS</span>
+        </div>
+        <div class="card-body">
+          <h2 class="card-value text-red">{{ criticalAlerts | number:'2.0-0' }}</h2>
+          <p class="card-desc text-red">Items below threshold</p>
+        </div>
+        <div class="card-footer text-red text-bold">
+          <a routerLink="/admin/inventory" class="alert-link">Ver lista &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MIDDLE SECTION -->
+    <div class="middle-grid">
+      <!-- Chart Area -->
+      <div class="chart-container box-panel">
+        <div class="panel-header">
+          <div>
+            <h3 class="panel-title">Weekly Sales Performance</h3>
+            <p class="panel-desc">Comparative revenue analysis</p>
+          </div>
+          <div class="toggle-group">
+            <button class="toggle-btn active">Weekly</button>
+            <button class="toggle-btn">Monthly</button>
+          </div>
+        </div>
+        <div class="chart-placeholder">
+          <!-- Fake Chart -->
+          <ul class="bars">
+            <li><span class="day">MON</span></li>
+            <li><span class="day">TUE</span></li>
+            <li><span class="day">WED</span></li>
+            <li><span class="day">THU</span></li>
+            <li class="active-bar">
+              <div class="tooltip">$3.4k</div>
+              <div class="bar-fill"></div>
+              <span class="day">FRI</span>
+            </li>
+            <li><span class="day">SAT</span></li>
+            <li><span class="day">SUN</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Warehouse Entries -->
+      <div class="entries-container box-panel">
+        <div class="panel-header">
+          <h3 class="panel-title-sm">WAREHOUSE ENTRIES</h3>
+          <span class="badge-light">Today</span>
+        </div>
+        
+        <div class="entry-list">
+          <div class="entry-item">
+            <div class="entry-icon"><span nz-icon nzType="car" nzTheme="outline"></span></div>
+            <div class="entry-info">
+              <h4>Beverages Dist. Co.</h4>
+              <p>12 Boxes &bull; Ref: #WR-892</p>
+            </div>
+            <div class="entry-time">09:15 AM</div>
+          </div>
+
+          <div class="entry-item">
+            <div class="entry-icon"><span nz-icon nzType="car" nzTheme="outline"></span></div>
+            <div class="entry-info">
+              <h4>Fresh Produce Ltd.</h4>
+              <p>05 Pallets &bull; Ref: #WR-893</p>
+            </div>
+            <div class="entry-time">11:40 AM</div>
+          </div>
+
+          <div class="entry-item">
+            <div class="entry-icon"><span nz-icon nzType="car" nzTheme="outline"></span></div>
+            <div class="entry-info">
+              <h4>Global Snacks Inc.</h4>
+              <p>22 Units &bull; Ref: #WR-894</p>
+            </div>
+            <div class="entry-time">02:10 PM</div>
+          </div>
+        </div>
+
+        <button class="btn-outline-blue">REGISTER NEW ENTRY</button>
+      </div>
+    </div>
+
+    <!-- RECENT TRANSACTIONS -->
+    <div class="transactions-container box-panel">
+      <div class="panel-header" style="margin-bottom: 1.5rem;">
+        <h3 class="panel-title">Recent Transactions</h3>
+        <div class="table-actions">
+          <nz-input-group [nzPrefix]="searchIcon" class="search-input">
+            <input type="text" nz-input placeholder="Busca ventas..." [(ngModel)]="searchQuery" />
+          </nz-input-group>
+          <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+          
+          <button nz-button class="btn-filter">
+            <span nz-icon nzType="filter"></span> Filter
+          </button>
+        </div>
+      </div>
+
+      <nz-table #basicTable [nzData]="transactions" [nzFrontPagination]="false" [nzShowPagination]="false" class="custom-table">
+        <thead>
+          <tr>
+            <th>ID TRANSACTION</th>
+            <th>DATE & TIME</th>
+            <th>CUSTOMER</th>
+            <th>ITEMS</th>
+            <th>TOTAL AMOUNT</th>
+            <th>STATUS</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of basicTable.data">
+            <td class="font-bold text-blue">{{ data.id }}</td>
+            <td>
+              <div class="td-stack">
+                <span>{{ data.date.split('•')[0] }}</span>
+                <span>{{ data.date.split('•')[1] }}</span>
+              </div>
+            </td>
+            <td class="font-bold">{{ data.customer }}</td>
+            <td class="text-gray">{{ data.items }}</td>
+            <td class="font-bold">{{ data.amount }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="{'paid': data.status === 'PAID', 'pending': data.status === 'PENDING'}">
+                {{ data.status }}
+              </span>
+            </td>
+            <td>
+              <span nz-icon nzType="more" nzTheme="outline" class="more-icon"></span>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      
+      <div class="pagination-footer">
+        <span class="showing-text">SHOWING 4 OF 128 TRANSACTIONS</span>
+        <div class="pagination-controls">
+          <button class="page-btn">&lt;</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">&gt;</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

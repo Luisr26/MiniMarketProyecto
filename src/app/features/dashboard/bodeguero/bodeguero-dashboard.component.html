@@ -1,0 +1,162 @@
+<div class="dashboard-page bodeguero-page">
+
+  <!-- HEADER -->
+  <header class="dashboard-header flex-between">
+    <div class="header-left-group">
+      <div>
+        <span class="page-subtitle">WAREHOUSE LOGISTICS</span>
+        <h1 class="page-title">Bodeguero Dashboard</h1>
+      </div>
+      <div class="header-search-container ml-4">
+        <nz-input-group [nzPrefix]="prefixSearch" class="top-search-bar">
+          <input type="text" nz-input placeholder="Buscar en almacén..." [(ngModel)]="topSearchQuery" (keydown.enter)="onGlobalSearch()" />
+        </nz-input-group>
+        <ng-template #prefixSearch><span nz-icon nzType="search"></span></ng-template>
+      </div>
+    </div>
+
+    <div class="header-right-actions">
+      <div class="action-icons-wrap">
+        <span nz-icon nzType="bell" nzTheme="outline" class="action-icon" (click)="showNotifications()"></span>
+        <span nz-icon nzType="logout" nzTheme="outline" class="action-icon action-logout" (click)="logout()"></span>
+      </div>
+      
+      <div class="user-profile-sm">
+        <div class="user-info">
+          <span class="user-name">{{ userName }}</span>
+          <span class="user-role">BODEGUERO</span>
+        </div>
+        <div class="user-avatar-sm"></div>
+      </div>
+
+      <button class="btn-dark-blue ml-3">
+        <span nz-icon nzType="plus-square" nzTheme="outline"></span> Register Entry
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="bodeguero-layout">
+    
+    <!-- LEFT MAIN AREA -->
+    <div class="bodeguero-main">
+      
+      <!-- TOP CARDS -->
+      <div class="cards-grid-2">
+        <div class="stat-card stat-card-bg-truck">
+          <span class="card-label">ENTRIES TODAY</span>
+          <h2 class="card-value-lg text-blue">{{ entriesTodayCount }}</h2>
+          <div class="card-footer text-green">
+            <span nz-icon nzType="line-chart" nzTheme="outline"></span> Sync active
+          </div>
+        </div>
+
+        <div class="stat-card stat-card-bg-clip">
+          <span class="card-label">ACTIVE SKUs</span>
+          <h2 class="card-value-lg text-blue">{{ activeSkusCount | number }}</h2>
+          <div class="card-footer text-gray">
+            En base de datos persistente
+          </div>
+        </div>
+      </div>
+
+      <!-- LATEST ENTRIES TABLE -->
+      <div class="entries-container box-panel">
+        <div class="panel-header mb-4">
+          <h3 class="panel-title">Latest Warehouse Entries</h3>
+          <a href="#" class="view-all-link">VIEW ALL LOGS</a>
+        </div>
+
+        <nz-table #entriesTable [nzData]="entries" [nzFrontPagination]="false" [nzShowPagination]="false" class="custom-table bodeguero-table">
+          <thead>
+            <tr>
+              <th>PRODUCT DESCRIPTION</th>
+              <th>ENTRY TIME</th>
+              <th>SUPPLIER</th>
+              <th>QUANTITY</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of entriesTable.data">
+              <td>
+                <div class="flex-cell">
+                  <div class="img-placeholder"></div>
+                  <div class="td-stack">
+                    <span class="font-bold text-dark">{{ data.description }}</span>
+                    <span>{{ data.sku }}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="font-bold text-dark">{{ data.time }}</td>
+              <td>
+                <div class="td-stack text-dark">
+                  <span>{{ data.supplier }}</span>
+                </div>
+              </td>
+              <td class="font-bold text-blue">{{ data.quantity }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR (ALERTS & SYSTEM) -->
+    <div class="bodeguero-sidebar">
+      
+      <!-- LOW STOCK ALERTS -->
+      <div class="alerts-panel">
+        <h3 class="alert-title">
+          <span nz-icon nzType="warning" nzTheme="fill" class="text-red"></span> Alertas de Stock Bajo
+        </h3>
+
+        <div class="alert-card" *ngFor="let p of lowStockAlerts">
+          <div class="alert-info">
+            <h4>{{ p.name }}</h4>
+            <p>Nivel de Stock: <span class="text-red font-bold">{{ p.stock }} unidades</span></p>
+          </div>
+          <button class="btn-order" (click)="orderProduct(p)">PEDIR</button>
+        </div>
+
+        <div class="empty-alerts" *ngIf="lowStockAlerts.length === 0">
+          <p class="text-gray text-center mt-4">Todo al día. No hay alertas.</p>
+        </div>
+
+        <button class="btn-outline-dashed mt-3" routerLink="/bodeguero/inventory">REVISAR TODO</button>
+      </div>
+
+      <!-- STORAGE CAPACITY -->
+      <div class="storage-card box-panel dark-panel">
+        <h3 class="panel-title text-white">Storage Capacity</h3>
+        <p class="panel-desc text-light">Warehouse Section A is reaching 85% capacity. Consider reallocating incoming dry goods to Section C.</p>
+        
+        <div class="progress-container">
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 85%;"></div>
+          </div>
+        </div>
+        
+        <div class="progress-stats">
+          <span>USED: 850M&sup3;</span>
+          <span>TOTAL: 1000M&sup3;</span>
+        </div>
+      </div>
+
+      <!-- URGENT DISPATCH -->
+      <div class="dispatch-card">
+        <div class="dispatch-badge">SCANNER READY</div>
+        <div class="dispatch-content">
+          <div class="avatar-lm">LM</div>
+          <div>
+            <h4 class="dispatch-title">Logistics Manager</h4>
+            <p class="dispatch-subtitle">+51 983 221 004</p>
+          </div>
+          <div class="qr-btn">
+            <span nz-icon nzType="barcode" nzTheme="outline"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

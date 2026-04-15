@@ -1,0 +1,323 @@
+<div class="pos-wrapper" *ngIf="!isSaleCompleted">
+  <!-- HEADER -->
+  <header class="pos-header">
+    <div class="terminal-info">
+      <div class="terminal-icon">
+        <span nz-icon nzType="shop" nzTheme="fill"></span>
+      </div>
+      <div>
+        <h2 class="terminal-name">{{ terminalId }}</h2>
+        <p class="cashier-name">Cajero: {{ cashierName }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="icon-circle"><span nz-icon nzType="bell" nzTheme="outline"></span></div>
+      <button nz-button class="btn-new-sale-dark">
+        <span nz-icon nzType="plus" nzTheme="outline"></span> Nueva Venta
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENT TWO COLUMNS -->
+  <div class="pos-content">
+    
+    <!-- LEFT: PRODUCTS -->
+    <div class="products-section">
+      <!-- Search Input -->
+      <div class="search-bar">
+        <nz-input-group [nzPrefix]="prefixSearch" class="search-input-lg">
+          <input type="text" nz-input placeholder="Buscar productos por nombre o código..." [(ngModel)]="searchQuery" />
+        </nz-input-group>
+        <ng-template #prefixSearch><span nz-icon nzType="search"></span></ng-template>
+      </div>
+
+      <!-- Categories -->
+      <div class="categories-row">
+        <button 
+          *ngFor="let cat of categories" 
+          class="cat-pill" 
+          [class.active]="activeCategory === cat"
+          (click)="setCategory(cat)">
+          {{ cat }}
+        </button>
+      </div>
+
+      <!-- Grid -->
+      <div class="products-grid">
+        <div class="product-card" *ngFor="let p of filteredProducts">
+          <div class="prod-img-placeholder">
+            <span class="stock-badge" [ngClass]="p.stock > 5 ? 'stock-green' : 'stock-red'">
+              {{ p.stock }} Disp.
+            </span>
+          </div>
+          <div class="prod-info">
+            <h4 class="prod-title">{{ p.name }}</h4>
+            <p class="prod-cat">{{ p.category }}</p>
+          </div>
+          <div class="prod-footer">
+            <span class="prod-price">${{ p.price | number:'1.2-2' }}</span>
+            <button class="btn-add" (click)="addToCart(p)" [disabled]="p.stock === 0">
+              <span nz-icon nzType="plus" nzTheme="outline"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: CART -->
+    <div class="cart-section">
+      <div class="cart-header">
+        <div>
+          <h2 class="cart-title">Carrito</h2>
+          <p class="cart-count">{{ totalItems }} ARTÍCULOS</p>
+        </div>
+        <button class="btn-clear" (click)="clearCart()">
+          <span nz-icon nzType="delete" nzTheme="outline"></span> Limpiar
+        </button>
+      </div>
+
+      <div class="cart-items">
+        <div class="cart-item" *ngFor="let item of cart">
+          <div class="item-img-sm"></div>
+          <div class="item-details">
+            <h4 class="item-title">{{ item.name }}</h4>
+            <p class="item-calc">${{ item.price | number:'1.2-2' }} &times; {{ item.quantity }}</p>
+            <p class="item-discount" *ngIf="item.discountRate">Desc. {{ item.discountRate * 100 }}% aplicado</p>
+          </div>
+          <div class="item-total">
+            ${{ (item.price * item.quantity * (1 - (item.discountRate || 0))) | number:'1.2-2' }}
+          </div>
+          <div class="qty-control">
+            <button (click)="incrementQty(item)">+</button>
+            <span>{{ item.quantity }}</span>
+            <button (click)="decrementQty(item)">&minus;</button>
+          </div>
+        </div>
+
+        <div class="empty-cart" *ngIf="cart.length === 0">
+          <span nz-icon nzType="shopping-cart" nzTheme="outline"></span>
+          <p>Carrito vacío</p>
+        </div>
+      </div>
+
+      <div class="cart-footer">
+        <div class="summary-row">
+          <span class="summary-lbl">Subtotal</span>
+          <span class="summary-val font-bold">${{ subtotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-lbl">Descuentos</span>
+          <span class="summary-val text-red">-${{ discountTotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-row mb-3">
+          <span class="summary-lbl">IVA (16%)</span>
+          <span class="summary-val font-bold">${{ ivaTotal | number:'1.2-2' }}</span>
+        </div>
+
+        <div class="total-banner">
+          <span class="total-lbl">TOTAL A PAGAR</span>
+          <span class="total-val">${{ finalTotal | number:'1.2-2' }}</span>
+        </div>
+
+        <button class="btn-cobrar" [disabled]="cart.length === 0" (click)="openPaymentModal()">
+          <span nz-icon nzType="money-collect" nzTheme="outline"></span> COBRAR
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL COBRO ================= -->
+<nz-modal
+  [(nzVisible)]="isPaymentModalVisible"
+  [nzFooter]="null"
+  [nzBodyStyle]="{ padding: '0', borderRadius: '12px' }"
+  [nzClosable]="false"
+  nzWidth="700px"
+  nzCentered>
+  <ng-container *nzModalContent>
+    <div class="modal-cobro">
+      <!-- Modal Header -->
+      <div class="mc-header">
+        <div class="mc-header-left">
+          <div class="mc-icon"><span nz-icon nzType="wallet" nzTheme="fill"></span></div>
+          <div>
+            <h3 class="mc-title">Finalizar Venta</h3>
+            <p class="mc-subtitle">TRANSACCIÓN ID: {{ transactionId }}</p>
+          </div>
+        </div>
+        <span nz-icon nzType="close" class="mc-close" (click)="closePaymentModal()"></span>
+      </div>
+
+      <div class="mc-body">
+        <!-- Left Column: Resumen -->
+        <div class="mc-resume">
+          <h4 class="mc-section-title">RESUMEN DE COMPRA</h4>
+          
+          <div class="mc-row">
+            <span>Subtotal ({{ totalItems }} items)</span>
+            <span class="font-bold">${{ subtotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="mc-row">
+            <span>IVA (16%)</span>
+            <span class="font-bold">${{ ivaTotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="mc-row">
+            <span>Descuento Promocional</span>
+            <span class="font-bold text-green">-${{ discountTotal | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="mc-total-box">
+            <span class="mt-lbl">MONTO TOTAL</span>
+            <span class="mt-val">${{ finalTotal | number:'1.2-2' }}</span>
+          </div>
+
+          <label nz-checkbox [(ngModel)]="printReceipt" class="mt-3">Imprimir comprobante</label>
+        </div>
+
+        <!-- Right Column: Pago -->
+        <div class="mc-payment">
+          <h4 class="mc-section-title">PROCESAR PAGO</h4>
+          
+          <div class="mp-input-group">
+            <label>MONTO RECIBIDO</label>
+            <div class="mp-input-box">
+              <span class="currency-sym">$</span>
+              <input type="number" [(ngModel)]="receivedAmount" class="mp-input" />
+            </div>
+          </div>
+
+          <div class="mp-change-box">
+            <div>
+              <span class="mp-change-lbl">CAMBIO A ENTREGAR</span>
+              <span class="mp-change-val">${{ changeReturned | number:'1.2-2' }}</span>
+            </div>
+            <span nz-icon nzType="sync" class="mp-icon-sync"></span>
+          </div>
+
+          <button class="btn-confirm-sale" [disabled]="!isPaymentValid" (click)="confirmSale()">
+            Confirmar Venta
+          </button>
+          <button class="btn-cancel-sale" (click)="closePaymentModal()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Footer Tabs -->
+      <div class="mc-footer-tabs">
+        <button class="tab-btn" [class.active]="paymentMethod === 'EFECTIVO'" (click)="paymentMethod = 'EFECTIVO'">
+          <span nz-icon nzType="dollar"></span> EFECTIVO
+        </button>
+        <button class="tab-btn" [class.active]="paymentMethod === 'TARJETA'" (click)="paymentMethod = 'TARJETA'">
+          <span nz-icon nzType="credit-card"></span> TARJETA
+        </button>
+        <button class="tab-btn" [class.active]="paymentMethod === 'TRANSFERENCIA'" (click)="paymentMethod = 'TRANSFERENCIA'">
+          <span nz-icon nzType="qrcode"></span> TRANSFERENCIA
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>
+
+<!-- ================= FACTURA TICKET / EXITO ================= -->
+<div class="ticket-wrapper" *ngIf="isSaleCompleted">
+  <div class="ticket-container">
+    
+    <!-- Left: Confirmación -->
+    <div class="t-success">
+      <h1 class="t-success-title">Venta Finalizada</h1>
+      <p class="t-success-desc">La transacción se ha procesado con éxito. Puede imprimir el comprobante o enviarlo por correo electrónico.</p>
+      
+      <div class="t-payment-method">
+        <div class="t-pm-icon"><span nz-icon nzType="check-circle" nzTheme="outline"></span></div>
+        <div class="t-pm-info">
+          <h4 class="t-pm-title">Pago Recibido</h4>
+          <p class="t-pm-desc">MÉTODO: {{ paymentMethod }}</p>
+        </div>
+      </div>
+
+      <button class="btn-ticket-primary mb-3">
+        <span nz-icon nzType="printer" nzTheme="outline"></span> Imprimir Ticket
+      </button>
+      <button class="btn-ticket-secondary">
+        <span nz-icon nzType="mail" nzTheme="outline"></span> Enviar por Email
+      </button>
+
+      <a href="javascript:void(0)" class="t-back-link" (click)="newSale()">
+        &larr; Nueva Venta
+      </a>
+    </div>
+
+    <!-- Right: Papel de Ticket -->
+    <div class="t-paper-wrap">
+      <div class="t-paper">
+        <div class="t-logo">
+          <h2>La Media Luna</h2>
+          <div class="t-divider-green"></div>
+          <p>MINI MARKET SYSTEM<br>Calle Principal #123, Ciudad<br>RNC: 1-01-00000-1</p>
+        </div>
+
+        <div class="t-meta">
+          <div>
+            <span>FACTURA NO.</span>
+            <strong>{{ transactionId }}</strong>
+          </div>
+          <div style="text-align: right;">
+            <span>FECHA & HORA</span>
+            <strong>{{ transactionDate }}</strong>
+          </div>
+        </div>
+
+        <div class="t-dashed-line"></div>
+
+        <table class="t-items">
+          <thead>
+            <tr>
+              <th>DESCRIPCIÓN / CANT.</th>
+              <th style="text-align: right">SUBTOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of cart">
+              <td>
+                <div class="ti-desc">{{ item.name }}</div>
+                <div class="ti-qty">{{ item.quantity }} x ${{ item.price | number:'1.2-2' }}</div>
+              </td>
+              <td style="text-align: right; font-weight:700;">
+                ${{ (item.price * item.quantity) | number:'1.2-2' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="t-summary">
+          <div class="t-s-row">
+            <span>Subtotal Bruto</span>
+            <span class="font-bold">${{ subtotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="t-s-row text-red font-bold">
+            <span>Descuento</span>
+            <span>-${{ discountTotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="t-s-row">
+            <span>Impuestos (ITBIS)</span>
+            <span class="font-bold">${{ ivaTotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="t-s-total">
+            <span>TOTAL</span>
+            <strong>${{ finalTotal | number:'1.2-2' }}</strong>
+          </div>
+        </div>
+
+        <p class="t-footer-msg">"Gracias por preferir La Media Luna. ¡Vuelva pronto!"</p>
+        
+        <div class="t-barcode container-bar-ticket">
+          <!-- Live generated barcode -->
+          <svg #barcodeElement></svg>
+          <p>{{ transactionId }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
