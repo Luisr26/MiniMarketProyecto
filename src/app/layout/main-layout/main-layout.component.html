@@ -1,0 +1,67 @@
+<div class="layout-wrapper">
+  
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2 class="sidebar-brand">La Media Luna</h2>
+      <span class="sidebar-subtitle">MINI MARKET SYSTEM</span>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li class="menu-item" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <span nz-icon nzType="appstore" nzTheme="outline"></span>
+        <span class="menu-text">DASHBOARD</span>
+      </li>
+      <li class="menu-item" routerLink="/admin/pos" routerLinkActive="active">
+        <span nz-icon nzType="shop" nzTheme="outline"></span>
+        <span class="menu-text">POS</span>
+      </li>
+      <li class="menu-item" [routerLink]="role === 'admin' ? '/admin/inventory' : '/bodeguero/inventory'" routerLinkActive="active">
+        <span nz-icon nzType="inbox" nzTheme="outline"></span>
+        <span class="menu-text">INVENTORY</span>
+      </li>
+      <li class="menu-item" *ngIf="role === 'admin'" routerLink="/admin/suppliers" routerLinkActive="active">
+        <span nz-icon nzType="car" nzTheme="outline"></span>
+        <span class="menu-text">SUPPLIERS</span>
+      </li>
+      <li class="menu-item" *ngIf="role === 'admin'" routerLink="/admin/users" routerLinkActive="active">
+        <span nz-icon nzType="team" nzTheme="outline"></span>
+        <span class="menu-text">USERS</span>
+      </li>
+      <li class="menu-item" *ngIf="role === 'admin'">
+        <span nz-icon nzType="bar-chart" nzTheme="outline"></span>
+        <span class="menu-text">REPORTS</span>
+      </li>
+      <li class="menu-item">
+        <span nz-icon nzType="plus-square" nzTheme="outline"></span>
+        <span class="menu-text">PRODUCT ENTRY</span>
+      </li>
+      <li class="menu-item" routerLink="/admin/history" routerLinkActive="active">
+        <span nz-icon nzType="history" nzTheme="outline"></span>
+        <span class="menu-text">HISTORY</span>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button *ngIf="role === 'admin'" class="btn-new-sale">
+        <span nz-icon nzType="plus" nzTheme="outline"></span> New Sale
+      </button>
+
+      <ul class="sidebar-bottom-menu">
+        <li class="menu-item menu-item-small">
+          <span nz-icon nzType="question-circle" nzTheme="outline"></span>
+          <span>SUPPORT</span>
+        </li>
+        <li class="menu-item menu-item-small">
+          <span nz-icon nzType="setting" nzTheme="outline"></span>
+          <span>SETTINGS</span>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
