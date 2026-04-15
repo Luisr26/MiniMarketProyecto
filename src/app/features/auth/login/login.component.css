@@ -1,0 +1,242 @@
+/* ===== PAGE WRAPPER ===== */
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  /* Soft greenish/grayish background representing the image's back */
+  background: linear-gradient(135deg, #f4f6fb 0%, #e8f0eb 100%);
+  padding: 1rem;
+}
+
+/* ===== MAIN CARD ===== */
+.login-card {
+  display: flex;
+  width: 1000px;
+  max-width: 100%;
+  min-height: 600px;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== LEFT PANEL (DARK BLUE) ===== */
+.login-left {
+  flex: 1.1;
+  background-color: #0c1157; /* Deep exact blue */
+  color: #fff;
+  padding: 3.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-left__content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4rem;
+}
+
+.brand-logo svg {
+  width: 32px;
+  height: 32px;
+}
+
+.brand-text {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.main-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 4rem;
+  letter-spacing: -0.5px;
+  color: #fff;
+}
+
+.quote-box {
+  border-left: 3px solid #6ee7b7; /* Bright green line */
+  padding-left: 1.5rem;
+  margin-bottom: auto; /* Push remaining content to bottom */
+}
+
+.quote-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #d1d5db;
+  margin: 0;
+}
+
+.trusted-by {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #6b7280;
+}
+
+.trusted-line {
+  flex: 1;
+  height: 1px;
+  background: #374151; /* Dark line */
+}
+
+/* ===== RIGHT PANEL (WHITE) ===== */
+.login-right {
+  flex: 1;
+  padding: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.login-right__inner {
+  width: 100%;
+  max-width: 380px;
+}
+
+.welcome-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
+}
+
+.welcome-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 2.5rem;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6b7280;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.forgot-link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  text-decoration: none;
+}
+
+/* Override Ng-Zorro inputs for exact match */
+::ng-deep .custom-input-group.ant-input-affix-wrapper {
+  background-color: #f3f4f6 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 8px 14px !important;
+  box-shadow: none !important;
+}
+
+::ng-deep .custom-input-group.ant-input-affix-wrapper > input.ant-input {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+::ng-deep .custom-input-group.ant-input-affix-wrapper .anticon {
+  color: #9ca3af;
+}
+
+.checkbox-group {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+::ng-deep .checkbox-group .ant-checkbox-wrapper {
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+/* Buttons */
+.btn-primary {
+  width: 100%;
+  height: 44px;
+  background-color: #10165F;
+  border-color: #10165F;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 3rem;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #0c1144;
+  border-color: #0c1144;
+}
+
+.request-access-container {
+  text-align: center;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 2rem;
+}
+
+.request-text {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.btn-secondary {
+  width: 100%;
+  max-width: 200px;
+  height: 40px;
+  background-color: #f3f4f6;
+  border-color: #f3f4f6;
+  color: #374151;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.btn-secondary:hover {
+  background-color: #e5e7eb;
+  border-color: #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-card {
+    flex-direction: column;
+  }
+  .login-left {
+    padding: 2rem;
+  }
+  .login-right {
+    padding: 2rem;
+  }
+}

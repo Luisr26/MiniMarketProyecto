@@ -1,0 +1,81 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    
+    <!-- ========== LEFT PANEL ========== -->
+    <div class="login-left">
+      <div class="login-left__content">
+        <!-- Brand / Logo -->
+        <div class="brand">
+          <div class="brand-logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="24" height="24" rx="6" fill="white"/>
+              <path d="M12 6C9 6 6.5 8.5 6.5 12C6.5 15.5 9 18 12 18V15C10.5 15 9.5 13.5 9.5 12C9.5 10.5 10.5 9 12 9V6Z" fill="#10165F"/>
+            </svg>
+          </div>
+          <span class="brand-text">La Media Luna</span>
+        </div>
+
+        <h1 class="main-title">The Modern<br>Merchant's Ledger</h1>
+
+        <div class="quote-box">
+          <p class="quote-text">
+            "Elegance in inventory, precision in billing. Manage your market with the prestige it deserves."
+          </p>
+        </div>
+
+        <div class="trusted-by">
+          <span>TRUSTED BY PREMIUM RETAILERS</span>
+          <div class="trusted-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== RIGHT PANEL ========== -->
+    <div class="login-right">
+      <div class="login-right__inner">
+        <h2 class="welcome-title">Welcome Back</h2>
+        <p class="welcome-subtitle">Enter your credentials to access the dashboard.</p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <!-- User Field -->
+          <div class="form-group">
+            <label class="form-label">USUARIO</label>
+            <nz-input-group [nzPrefix]="prefixUser" class="custom-input-group">
+              <input type="text" nz-input formControlName="email" placeholder="nombre.apellido" />
+            </nz-input-group>
+            <ng-template #prefixUser><span nz-icon nzType="user"></span></ng-template>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group" style="margin-top:1.5rem;">
+            <div class="form-label-row">
+              <label class="form-label">CONTRASEÑA</label>
+              <a href="javascript:void(0)" class="forgot-link">Forgot?</a>
+            </div>
+            <nz-input-group [nzPrefix]="prefixLock" [nzSuffix]="suffixEye" class="custom-input-group">
+              <input [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="password" placeholder="••••••••" />
+            </nz-input-group>
+            <ng-template #prefixLock><span nz-icon nzType="lock"></span></ng-template>
+            <ng-template #suffixEye>
+              <span nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" (click)="togglePasswordVisibility()"></span>
+            </ng-template>
+          </div>
+
+          <!-- Keep logged in -->
+          <div class="checkbox-group">
+            <label nz-checkbox formControlName="remember">Keep me logged in</label>
+          </div>
+
+          <!-- Action Buttons -->
+          <button nz-button type="submit" class="btn-primary">ENTRAR &rarr;</button>
+          
+          <div class="request-access-container">
+            <p class="request-text">Don't have an account?</p>
+            <button type="button" nz-button class="btn-secondary">REQUEST ACCESS</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
