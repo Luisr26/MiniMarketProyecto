@@ -1,1 +1,48 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+/* Define globally available CSS Variables */
+@layer base {
+  :root {
+    --color-primary-dark: #10165F;
+    --color-primary-light: #E6E9FA;
+    --color-bg-main: #F8F9FD;
+    --color-status-paid: #28C76F;
+    --color-status-pending: #FF9F43;
+    --color-status-error: #EA5455;
+    
+    /* Compactness Tokens */
+    --font-size-base: 14px;
+    --spacing-panel: 1rem;
+    --spacing-card: 0.75rem;
+  }
+}
+
+/* Let Tailwind pick them up */
+@theme {
+  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-light: var(--color-primary-light);
+  --color-bg-main: var(--color-bg-main);
+  --color-status-paid: var(--color-status-paid);
+  --color-status-pending: var(--color-status-pending);
+  --color-status-error: var(--color-status-error);
+  --radius-xl: 10px;
+  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* ===== Base layer ===== */
+@layer base {
+  html {
+    font-size: var(--font-size-base);
+  }
+  body {
+    background-color: var(--color-bg-main);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #1f2937;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+
