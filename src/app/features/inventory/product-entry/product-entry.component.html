@@ -1,0 +1,92 @@
+<div class="product-entry-container">
+  
+  <div class="entry-layout">
+    
+    <!-- ENTRY FORM -->
+    <div class="entry-form-panel box-panel">
+      <div class="panel-header mb-6">
+        <div>
+          <h2 class="form-title">Registro de Entrada</h2>
+          <p class="form-subtitle">RECEPCIÓN DE MERCANCÍA AL ALMACÉN</p>
+        </div>
+        <div class="form-badge">NUEVO LOTE</div>
+      </div>
+
+      <div class="form-grid">
+        <!-- Product Selection -->
+        <div class="field-item full">
+          <label>PRODUCTO / SKU</label>
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Seleccionar producto del catálogo" [(ngModel)]="formData.productId" class="custom-select">
+            <nz-option *ngFor="let p of products" [nzLabel]="p.name + ' (' + p.sku + ')'" [nzValue]="p.id"></nz-option>
+          </nz-select>
+        </div>
+
+        <!-- Supplier -->
+        <div class="field-item">
+          <label>PROVEEDOR</label>
+          <nz-select nzPlaceHolder="Seleccionar proveedor" [(ngModel)]="formData.supplierId" class="custom-select">
+            <nz-option *ngFor="let s of suppliers" [nzLabel]="s.name" [nzValue]="s.id"></nz-option>
+          </nz-select>
+        </div>
+
+        <!-- Quantity -->
+        <div class="field-item">
+          <label>CANTIDAD RECIBIDA</label>
+          <nz-input-group [nzSuffix]="unitSuffix">
+            <input type="number" nz-input [(ngModel)]="formData.quantity" placeholder="0" class="custom-input" />
+          </nz-input-group>
+          <ng-template #unitSuffix><span class="text-gray-400 font-bold">UDS</span></ng-template>
+        </div>
+
+        <!-- Date -->
+        <div class="field-item">
+          <label>FECHA DE INGRESO</label>
+          <nz-date-picker [(ngModel)]="formData.entryDate" style="width: 100%;" class="custom-date-picker"></nz-date-picker>
+        </div>
+
+        <!-- Reference Notes -->
+        <div class="field-item full">
+          <label>NOTAS DE RECEPCIÓN / OBSERVACIONES</label>
+          <textarea nz-input [nzAutosize]="{ minRows: 3, maxRows: 5 }" [(ngModel)]="formData.notes" placeholder="Ej: Mercancía recibida según factura #3021. Sin daños visibles." class="custom-textarea"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions mt-6">
+        <button class="btn-cancel" (click)="resetForm()">Borrar Campos</button>
+        <button class="btn-submit" (click)="submitEntry()">
+          <span nz-icon nzType="plus-circle" nzTheme="outline"></span> REGISTRAR ENTRADA
+        </button>
+      </div>
+    </div>
+
+    <!-- RECENT ENTRIES LOG -->
+    <div class="entry-log-panel">
+      <div class="log-header">
+        <h3 class="log-title">Entradas Recientes</h3>
+        <span nz-icon nzType="history" nzTheme="outline"></span>
+      </div>
+
+      <div class="log-list">
+        <div class="log-card" *ngFor="let entry of recentEntries">
+          <div class="log-card-left">
+            <span class="log-id">{{ entry.id }}</span>
+            <h4 class="log-prod-name">{{ entry.product }}</h4>
+            <div class="log-meta">
+              <span>{{ entry.supplier }}</span>
+              <span class="dot">•</span>
+              <span>{{ entry.time }}</span>
+            </div>
+          </div>
+          <div class="log-card-right">
+            <span class="log-qty">+{{ entry.quantity }}</span>
+            <span class="log-status">{{ entry.status }}</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-view-logs">VER TODOS LOS REGISTROS</button>
+    </div>
+
+  </div>
+
+</div>

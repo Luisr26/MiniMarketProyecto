@@ -1,33 +1,5 @@
 <div class="dashboard-page">
 
-  <!-- HEADER -->
-  <header class="dashboard-header">
-    <div class="header-left">
-      <h1 class="page-title">Dashboard Overview</h1>
-      <div class="header-search-container">
-        <nz-input-group [nzPrefix]="prefixSearch" class="top-search-bar">
-          <input type="text" nz-input placeholder="Búsqueda global..." [(ngModel)]="topSearchQuery" (keydown.enter)="onGlobalSearch()" />
-        </nz-input-group>
-        <ng-template #prefixSearch><span nz-icon nzType="search"></span></ng-template>
-      </div>
-    </div>
-    
-    <div class="header-actions">
-      <span nz-icon nzType="bell" nzTheme="outline" class="action-icon" (click)="showNotifications()"></span>
-      <span nz-icon nzType="setting" nzTheme="outline" class="action-icon"></span>
-      
-      <div class="user-profile">
-        <div class="user-info">
-          <span class="user-name">{{ userName }}</span>
-          <span class="user-role">ADMIN</span>
-        </div>
-        <div class="user-avatar"></div>
-      </div>
-      
-      <span nz-icon nzType="logout" nzTheme="outline" class="action-icon action-logout" (click)="logout()"></span>
-    </div>
-  </header>
-
   <!-- CONTENT -->
   <div class="dashboard-content">
     

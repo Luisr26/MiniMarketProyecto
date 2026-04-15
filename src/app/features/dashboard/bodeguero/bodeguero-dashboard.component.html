@@ -1,39 +1,5 @@
 <div class="dashboard-page bodeguero-page">
 
-  <!-- HEADER -->
-  <header class="dashboard-header flex-between">
-    <div class="header-left-group">
-      <div>
-        <span class="page-subtitle">WAREHOUSE LOGISTICS</span>
-        <h1 class="page-title">Bodeguero Dashboard</h1>
-      </div>
-      <div class="header-search-container ml-4">
-        <nz-input-group [nzPrefix]="prefixSearch" class="top-search-bar">
-          <input type="text" nz-input placeholder="Buscar en almacén..." [(ngModel)]="topSearchQuery" (keydown.enter)="onGlobalSearch()" />
-        </nz-input-group>
-        <ng-template #prefixSearch><span nz-icon nzType="search"></span></ng-template>
-      </div>
-    </div>
-
-    <div class="header-right-actions">
-      <div class="action-icons-wrap">
-        <span nz-icon nzType="bell" nzTheme="outline" class="action-icon" (click)="showNotifications()"></span>
-        <span nz-icon nzType="logout" nzTheme="outline" class="action-icon action-logout" (click)="logout()"></span>
-      </div>
-      
-      <div class="user-profile-sm">
-        <div class="user-info">
-          <span class="user-name">{{ userName }}</span>
-          <span class="user-role">BODEGUERO</span>
-        </div>
-        <div class="user-avatar-sm"></div>
-      </div>
-
-      <button class="btn-dark-blue ml-3">
-        <span nz-icon nzType="plus-square" nzTheme="outline"></span> Register Entry
-      </button>
-    </div>
-  </header>
 
   <!-- CONTENT -->
   <div class="bodeguero-layout">

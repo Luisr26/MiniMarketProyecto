@@ -1,24 +1,40 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterModule, Router } from '@angular/router';
+import { RouterOutlet, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
-
-import { AuthService, UserSession } from '../../core/services/auth.service';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterModule, NzIconModule, NzMenuModule],
+  imports: [
+    CommonModule, 
+    RouterOutlet, 
+    RouterModule, 
+    FormsModule,
+    NzIconModule, 
+    NzMenuModule, 
+    NzInputModule, 
+    NzMessageModule
+  ],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.css'
+  styleUrl: './main-layout.component.css',
+  providers: [NzMessageService]
 })
 export class MainLayoutComponent implements OnInit {
   isCollapsed = false;
   role: 'admin' | 'bodeguero' | 'cajero' = 'admin';
   userName = 'User';
+  searchQuery = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private message: NzMessageService
+  ) {}
 
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
@@ -31,6 +47,17 @@ export class MainLayoutComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  onSearch() {
+    if (this.searchQuery.trim()) {
+      this.message.loading(`Buscando "${this.searchQuery}" en todo el sistema...`, { nzDuration: 1500 });
+      this.searchQuery = '';
+    }
+  }
+
+  showNotifications() {
+    this.message.info('Sincronización de inventario completada correctamente.');
   }
 }
 

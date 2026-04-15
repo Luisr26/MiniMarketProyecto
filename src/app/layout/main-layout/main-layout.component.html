@@ -8,11 +8,11 @@
     </div>
 
     <ul class="sidebar-menu">
-      <li class="menu-item" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      <li class="menu-item" [routerLink]="role === 'admin' ? '/admin' : '/bodeguero'" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span nz-icon nzType="appstore" nzTheme="outline"></span>
         <span class="menu-text">DASHBOARD</span>
       </li>
-      <li class="menu-item" routerLink="/admin/pos" routerLinkActive="active">
+      <li class="menu-item" *ngIf="role === 'admin'" routerLink="/admin/pos" routerLinkActive="active">
         <span nz-icon nzType="shop" nzTheme="outline"></span>
         <span class="menu-text">POS</span>
       </li>
@@ -28,15 +28,15 @@
         <span nz-icon nzType="team" nzTheme="outline"></span>
         <span class="menu-text">USERS</span>
       </li>
-      <li class="menu-item" *ngIf="role === 'admin'">
+      <li class="menu-item" *ngIf="role === 'admin'" routerLink="/admin/reports" routerLinkActive="active">
         <span nz-icon nzType="bar-chart" nzTheme="outline"></span>
         <span class="menu-text">REPORTS</span>
       </li>
-      <li class="menu-item">
+      <li class="menu-item" [routerLink]="role === 'admin' ? '/admin/product-entry' : '/bodeguero/product-entry'" routerLinkActive="active">
         <span nz-icon nzType="plus-square" nzTheme="outline"></span>
         <span class="menu-text">PRODUCT ENTRY</span>
       </li>
-      <li class="menu-item" routerLink="/admin/history" routerLinkActive="active">
+      <li class="menu-item" [routerLink]="role === 'admin' ? '/admin/history' : '/bodeguero/history'" routerLinkActive="active">
         <span nz-icon nzType="history" nzTheme="outline"></span>
         <span class="menu-text">HISTORY</span>
       </li>
@@ -62,6 +62,41 @@
 
   <!-- MAIN CONTENT AREA -->
   <main class="main-content">
-    <router-outlet></router-outlet>
+    <!-- TOP NAVBAR -->
+    <header class="top-navbar">
+      <div class="navbar-left">
+        <div class="search-container">
+          <nz-input-group [nzPrefix]="prefixSearch" class="global-navbar-search">
+            <input type="text" nz-input placeholder="Búsqueda global..." [(ngModel)]="searchQuery" (keydown.enter)="onSearch()" />
+          </nz-input-group>
+          <ng-template #prefixSearch><span nz-icon nzType="search"></span></ng-template>
+        </div>
+      </div>
+
+      <div class="navbar-actions">
+        <div class="badge-icon-wrap" (click)="showNotifications()">
+          <span nz-icon nzType="bell" nzTheme="outline" class="nav-icon"></span>
+          <div class="nav-badge"></div>
+        </div>
+        
+        <span nz-icon nzType="setting" nzTheme="outline" class="nav-icon ml-4"></span>
+        
+        <div class="user-pill ml-4">
+          <div class="user-details">
+            <span class="pill-name">{{ userName }}</span>
+            <span class="pill-role">{{ role.toUpperCase() }}</span>
+          </div>
+          <div class="pill-avatar"></div>
+        </div>
+        
+        <div class="logout-btn-wrap ml-4" (click)="logout()">
+          <span nz-icon nzType="logout" nzTheme="outline" class="nav-icon logout-icon"></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll-area">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 </div>

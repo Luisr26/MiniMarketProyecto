@@ -28,6 +28,11 @@ export const routes: Routes = [
           import('./features/inventory/admin/inventory-admin.component').then(m => m.InventoryAdminComponent)
       },
       {
+        path: 'product-entry',
+        loadComponent: () =>
+          import('./features/inventory/product-entry/product-entry.component').then(m => m.ProductEntryComponent)
+      },
+      {
         path: 'suppliers',
         loadComponent: () =>
           import('./features/admin/suppliers/suppliers-manage.component').then(m => m.SuppliersManageComponent)
@@ -36,6 +41,11 @@ export const routes: Routes = [
         path: 'users',
         loadComponent: () =>
           import('./features/admin/users/users-manage.component').then(m => m.UsersManageComponent)
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./features/admin/reports/reports.component').then(m => m.ReportsComponent)
       },
       {
         path: 'history',
@@ -58,6 +68,16 @@ export const routes: Routes = [
         path: 'inventory',
         loadComponent: () =>
           import('./features/inventory/bodeguero/inventory-bodeguero.component').then(m => m.InventoryBodegueroComponent)
+      },
+      {
+        path: 'product-entry',
+        loadComponent: () =>
+          import('./features/inventory/product-entry/product-entry.component').then(m => m.ProductEntryComponent)
+      },
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('./features/history/history.component').then(m => m.HistoryComponent)
       }
     ]
   }
