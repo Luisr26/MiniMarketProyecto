@@ -1,0 +1,109 @@
+<div class="inv-bod-wrapper">
+
+  <!-- TOP BAR -->
+  <div class="inv-bod-topbar">
+    <div class="topbar-left"></div>
+    <div class="inv-header-right">
+      <div class="notif-icon" (click)="showNotifications()">
+        <span nz-icon nzType="bell" nzTheme="outline"></span>
+      </div>
+      <span class="user-label" (click)="logout()" style="cursor: pointer;">
+        Elena Garcés (Bodeguero) <span nz-icon nzType="logout" nzTheme="outline"></span>
+      </span>
+    </div>
+  </div>
+
+  <!-- HEADER ROW -->
+  <div class="inv-bod-header">
+    <div class="inv-bod-header-left">
+      <h1 class="inv-bod-title">Inventario Actual</h1>
+      <p class="inv-bod-subtitle">PANEL DEL BODEGUERO • VISTA LECTURA</p>
+    </div>
+    <div class="inv-bod-search">
+      <nz-input-group [nzPrefix]="searchIcon" class="bod-search-input">
+        <input type="text" nz-input placeholder="Buscar por producto, SKU o proveedor..." [(ngModel)]="searchQuery" />
+      </nz-input-group>
+      <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stat-cards">
+    <div class="stat-card card-blue">
+      <div class="stat-info">
+        <span class="stat-label label-blue">TOTAL SKUS</span>
+        <span class="stat-value value-blue">{{ totalSkus | number }}</span>
+      </div>
+      <div class="stat-icon icon-blue">
+        <span nz-icon nzType="inbox" nzTheme="outline"></span>
+      </div>
+    </div>
+
+    <div class="stat-card card-red">
+      <div class="stat-info">
+        <span class="stat-label label-red">STOCK CRÍTICO</span>
+        <span class="stat-value value-red">{{ criticalStock }}</span>
+      </div>
+      <div class="stat-icon icon-red">
+        <span nz-icon nzType="warning" nzTheme="outline"></span>
+      </div>
+    </div>
+
+    <div class="stat-card card-green">
+      <div class="stat-info">
+        <span class="stat-label label-green">VALOR ESTIMADO</span>
+        <span class="stat-value value-green">{{ estimatedValue }}</span>
+      </div>
+      <div class="stat-icon icon-green">
+        <span nz-icon nzType="dollar" nzTheme="outline"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="inv-bod-table-wrap">
+    <table class="inv-bod-table">
+      <thead>
+        <tr>
+          <th class="th-indicator"></th>
+          <th>PRODUCTO</th>
+          <th>SKU</th>
+          <th>STOCK</th>
+          <th>PROVEEDOR</th>
+          <th>ÚLTIMA ENTRADA</th>
+          <th>ESTADO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of paginatedItems" [ngClass]="getRowHighlight(item.status)">
+          <td class="cell-indicator">
+            <div class="row-bar" [ngClass]="getStatusClass(item.status)"></div>
+          </td>
+          <td class="cell-product">
+            <span [ngClass]="item.status === 'BAJO STOCK' ? 'text-danger' : 'text-normal'">{{ item.name }}</span>
+          </td>
+          <td class="cell-sku">{{ item.sku }}</td>
+          <td class="cell-stock-val">
+            <strong [ngClass]="item.status === 'BAJO STOCK' ? 'stock-red' : 'stock-dark'">{{ item.stock }}</strong>
+          </td>
+          <td class="cell-supplier">{{ item.supplier }}</td>
+          <td class="cell-date">{{ item.lastEntry }}</td>
+          <td class="cell-status">
+            <span class="status-badge" [ngClass]="getStatusClass(item.status)">
+              {{ item.status }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="inv-bod-pagination">
+    <span class="page-info-bod">Mostrando {{ paginatedItems.length }} de {{ filteredItems.length | number }} productos</span>
+    <div class="page-btns-bod">
+      <button class="btn-pag" (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+      <button class="btn-pag btn-pag-filled" (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+    </div>
+  </div>
+</div>

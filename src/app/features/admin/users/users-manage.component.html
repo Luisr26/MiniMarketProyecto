@@ -1,0 +1,186 @@
+<div class="user-manage-wrapper">
+
+  <!-- HEADER -->
+  <div class="user-header">
+    <div class="user-header-left">
+      <span class="admin-tag">ADMINISTRACIÓN</span>
+      <h1 class="user-title">Gestión de Usuarios</h1>
+    </div>
+    <div class="user-header-right">
+      <div class="header-tools" style="display: flex; gap: 1rem; align-items: center; margin-right: 1.5rem;">
+        <span nz-icon nzType="bell" nzTheme="outline" (click)="showNotifications()" style="cursor: pointer; font-size: 1.2rem; color: #9CA3AF;"></span>
+        <span nz-icon nzType="logout" nzTheme="outline" (click)="logout()" style="cursor: pointer; font-size: 1.2rem; color: #10165F;"></span>
+      </div>
+      <button class="btn-create-user" (click)="openCreateDrawer()">
+        <span nz-icon nzType="user-add" nzTheme="outline"></span> Crear Usuario
+      </button>
+    </div>
+  </div>
+
+  <!-- STATS HEADER ROW -->
+  <div class="user-stats-container">
+    <div class="stats-left">
+      <div class="stat-group">
+        <span class="stat-label">TOTAL USUARIOS</span>
+        <span class="stat-val">{{ totalUsers }}</span>
+      </div>
+      <div class="stat-group">
+        <span class="stat-label">ACTIVOS AHORA</span>
+        <span class="stat-val text-green">{{ activeNow }}</span>
+      </div>
+      <div class="stat-group">
+        <span class="stat-label">PENDIENTES</span>
+        <span class="stat-val text-orange">{{ pendingUsers }}</span>
+      </div>
+      <div class="stats-search">
+        <nz-input-group [nzPrefix]="searchIcon" class="user-search-input">
+          <input type="text" nz-input placeholder="Buscar por nombre..." [(ngModel)]="searchQuery" />
+        </nz-input-group>
+        <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+      </div>
+    </div>
+
+    <div class="audit-card">
+      <div class="audit-content">
+        <span class="audit-tag">SEGURIDAD</span>
+        <h3 class="audit-title">Auditoría de Accesos</h3>
+        <p class="audit-desc">Revisa los últimos inicios de sesión y cambios de roles.</p>
+      </div>
+      <div class="audit-icon-box">
+        <span nz-icon nzType="safety-certificate" nzTheme="outline"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE SECTION -->
+  <div class="user-table-wrap">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>USUARIO</th>
+          <th>ROL</th>
+          <th>ESTADO</th>
+          <th>ÚLTIMA CONEXIÓN</th>
+          <th class="text-right">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of filteredUsers">
+          <td class="cell-user">
+            <div class="user-avatar-placeholder"></div>
+            <div class="user-info">
+              <span class="user-name">{{ u.name }}</span>
+              <span class="user-email">{{ u.email }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="role-badge" [ngClass]="'role-' + u.role.toLowerCase()">{{ u.role }}</span>
+          </td>
+          <td>
+            <div class="status-indicator">
+              <span class="status-dot" [ngClass]="u.status === 'Activo' ? 'dot-active' : 'dot-inactive'"></span>
+              <span class="status-text">{{ u.status }}</span>
+            </div>
+          </td>
+          <td class="cell-login">{{ u.lastLogin }}</td>
+          <td class="cell-actions text-right">
+            <span nz-icon nzType="more" nzTheme="outline" class="action-more"></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABLE FOOTER -->
+  <div class="user-table-footer">
+    <span class="footer-info">Mostrando {{ filteredUsers.length }} de 24 usuarios</span>
+    <div class="footer-pagination">
+      <span nz-icon nzType="left" nzTheme="outline" class="pag-arrow disabled"></span>
+      <span class="pag-num active">1</span>
+      <span class="pag-num">2</span>
+      <span nz-icon nzType="right" nzTheme="outline" class="pag-arrow"></span>
+    </div>
+  </div>
+
+</div>
+
+<!-- CREATE USER DRAWER (Right Slide-over) -->
+<nz-drawer
+  [nzVisible]="isDrawerVisible"
+  [nzClosable]="false"
+  [nzWidth]="480"
+  nzPlacement="right"
+  (nzOnClose)="closeCreateDrawer()">
+  <ng-container *nzDrawerContent>
+    <div class="drawer-container">
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <h2 class="drawer-title">Crear Usuario</h2>
+          <span class="drawer-subtitle">NUEVO REGISTRO</span>
+        </div>
+        <span nz-icon nzType="close" class="drawer-close" (click)="closeCreateDrawer()"></span>
+      </div>
+
+      <div class="drawer-body">
+        <!-- Photo Upload Placeholder -->
+        <div class="photo-upload-container">
+          <div class="photo-box">
+            <span nz-icon nzType="camera" nzTheme="outline"></span>
+            <span class="photo-label">FOTO</span>
+          </div>
+          <p class="photo-hint">Formatos: JPG, PNG (Max 2MB)</p>
+        </div>
+
+        <div class="drawer-field">
+          <label>NOMBRE COMPLETO</label>
+          <input type="text" nz-input [(ngModel)]="newUser.fullName" placeholder="Ej. Juan Pérez" />
+        </div>
+
+        <div class="drawer-field">
+          <label>CORREO ELECTRÓNICO</label>
+          <input type="email" nz-input [(ngModel)]="newUser.email" placeholder="nombre@medialuna.com" />
+        </div>
+
+        <div class="drawer-row">
+          <div class="drawer-field">
+            <label>ROL DE SISTEMA</label>
+            <nz-select [(ngModel)]="newUser.role" class="drawer-select">
+              <nz-option *ngFor="let r of roles" [nzLabel]="r" [nzValue]="r"></nz-option>
+            </nz-select>
+          </div>
+          <div class="drawer-field">
+            <label>ESTADO INICIAL</label>
+            <nz-select [(ngModel)]="newUser.status" class="drawer-select">
+              <nz-option *ngFor="let s of statuses" [nzLabel]="s" [nzValue]="s"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+
+        <div class="drawer-field">
+          <label>CONTRASEÑA TEMPORAL</label>
+          <nz-input-group [nzSuffix]="suffixTemplate">
+            <input [type]="'password'" nz-input [(ngModel)]="newUser.password" placeholder="********" />
+          </nz-input-group>
+          <ng-template #suffixTemplate>
+            <span nz-icon nzType="eye" nzTheme="outline" class="pwd-toggle"></span>
+          </ng-template>
+          <p class="field-hint">Se le pedirá al usuario cambiar su contraseña en el primer inicio de sesión.</p>
+        </div>
+
+        <button class="btn-save-user" (click)="saveUser()">GUARDAR USUARIO</button>
+        <button class="btn-cancel-user" (click)="closeCreateDrawer()">CANCELAR</button>
+
+        <!-- Safety Box -->
+        <div class="safety-box">
+          <div class="safety-inner">
+            <span nz-icon nzType="info-circle" nzTheme="outline" class="safety-icon"></span>
+            <div class="safety-content">
+              <h4 class="safety-title">CONSEJO DE SEGURIDAD</h4>
+              <p class="safety-text">Los Cajeros solo tienen acceso al módulo POS y no pueden ver informes de inventario.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</nz-drawer>

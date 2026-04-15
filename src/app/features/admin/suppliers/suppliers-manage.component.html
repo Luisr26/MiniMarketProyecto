@@ -1,0 +1,177 @@
+<div class="sup-manage-wrapper">
+
+  <!-- HEADER -->
+  <div class="sup-header">
+    <div class="sup-header-left">
+      <h1 class="sup-title">Gestión de Proveedores</h1>
+      <p class="sup-subtitle">Listado y administración de socios logísticos</p>
+    </div>
+    <div class="sup-header-right">
+      <div class="search-box">
+        <nz-input-group [nzPrefix]="searchIcon" class="sup-search-input">
+          <input type="text" nz-input placeholder="Buscar proveedor..." [(ngModel)]="searchQuery" />
+        </nz-input-group>
+        <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+      </div>
+      <div class="header-icons">
+        <div class="icon-btn"><span nz-icon nzType="bell" nzTheme="fill" class="notif-dot"></span></div>
+        <div class="icon-btn"><span nz-icon nzType="setting" nzTheme="outline"></span></div>
+      </div>
+      <button class="btn-logout">Logout</button>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="sup-stats-row">
+    <div class="card-active-sup">
+      <div class="card-content">
+        <span class="card-label">PROVEEDORES ACTIVOS</span>
+        <div class="card-main">
+          <span class="card-number">{{ activeSuppliersCount }}</span>
+          <button class="btn-create-sup" (click)="openCreateModal()">
+            <span nz-icon nzType="plus-circle" nzTheme="outline"></span> Crear Proveedor
+          </button>
+        </div>
+        <div class="card-footer">
+          <span class="trend-up"><span nz-icon nzType="rise" nzTheme="outline"></span> +12% este mes</span>
+          <span class="last-reg">Último proveedor registrado hace 2 horas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-pending-orders">
+      <div class="card-content">
+        <span class="card-label label-white">ORDEN COMPRA PENDIENTE</span>
+        <div class="card-value-row">
+          <span class="card-value">Total: {{ pendingOrdersTotal }}</span>
+          <div class="orders-badge">+{{ newOrdersCount }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN LIST SECTION -->
+  <div class="sup-list-header">
+    <h2 class="list-title">Directorio de Proveedores</h2>
+    <div class="list-actions">
+      <button class="btn-list-action"><span nz-icon nzType="control" nzTheme="outline"></span> Filtros</button>
+      <button class="btn-list-action"><span nz-icon nzType="download" nzTheme="outline"></span> Exportar</button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="sup-table-wrap">
+    <table class="sup-table">
+      <thead>
+        <tr>
+          <th>PROVEEDOR</th>
+          <th>TELÉFONO DE CONTACTO</th>
+          <th>PRODUCTOS</th>
+          <th>FECHA REGISTRO</th>
+          <th>ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of filteredSuppliers">
+          <td class="cell-provider">
+            <div class="prov-avatar" [style.background-color]="s.color">{{ s.initials }}</div>
+            <div class="prov-info">
+              <span class="prov-name">{{ s.name }}</span>
+              <span class="prov-email">{{ s.email }}</span>
+            </div>
+          </td>
+          <td class="cell-phone">{{ s.phone }}</td>
+          <td class="cell-skus">
+            <span class="sku-badge">{{ s.skus }} SKU</span>
+          </td>
+          <td class="cell-date">{{ s.registrationDate }}</td>
+          <td class="cell-actions">
+            <span nz-icon nzType="edit" nzTheme="outline" class="action-icon"></span>
+            <span nz-icon nzType="delete" nzTheme="outline" class="action-icon delete-icon" (click)="deleteSupplier(s.id)"></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="sup-pagination">
+    <span class="page-info">Mostrando {{ filteredSuppliers.length }} de 42 proveedores</span>
+    <div class="pagination-controls">
+      <button class="btn-pag">Anterior</button>
+      <button class="btn-pag-num">1</button>
+      <button class="btn-pag-num active">2</button>
+      <button class="btn-pag-num">3</button>
+      <button class="btn-pag">Siguiente</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- CREATE SUPPLIER MODAL -->
+<nz-modal
+  [(nzVisible)]="isCreateModalVisible"
+  [nzFooter]="null"
+  [nzClosable]="false"
+  [nzBodyStyle]="{ padding: '0', borderRadius: '12px' }"
+  nzWidth="580px"
+  nzCentered>
+  <ng-container *nzModalContent>
+    <div class="modal-container">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Crear Proveedor</h3>
+          <p class="modal-subtitle">Complete los campos para registrar un nuevo socio logístico</p>
+        </div>
+        <span nz-icon nzType="close" class="modal-close" (click)="closeCreateModal()"></span>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-row">
+          <div class="modal-field">
+            <label>NOMBRE COMERCIAL</label>
+            <input type="text" nz-input [(ngModel)]="newSupplier.name" placeholder="Ej: Distribuidora Central" />
+          </div>
+          <div class="modal-field">
+            <label>RUT / IDENTIFICADOR</label>
+            <input type="text" nz-input [(ngModel)]="newSupplier.rut" placeholder="77.654.321-0" />
+          </div>
+        </div>
+
+        <div class="modal-row">
+          <div class="modal-field">
+            <label>TELÉFONO CONTACTO</label>
+            <nz-input-group [nzPrefix]="phonePrefix">
+              <input type="text" nz-input [(ngModel)]="newSupplier.phone" placeholder="+56 9 ..." />
+            </nz-input-group>
+            <ng-template #phonePrefix><span nz-icon nzType="phone"></span></ng-template>
+          </div>
+          <div class="modal-field">
+            <label>CORREO ELECTRÓNICO</label>
+            <nz-input-group [nzPrefix]="emailPrefix">
+              <input type="email" nz-input [(ngModel)]="newSupplier.email" placeholder="contacto@empresa.com" />
+            </nz-input-group>
+            <ng-template #emailPrefix><span nz-icon nzType="mail"></span></ng-template>
+          </div>
+        </div>
+
+        <div class="modal-field full">
+          <label>CATEGORÍA DE PRODUCTOS</label>
+          <nz-select [(ngModel)]="newSupplier.category" class="modal-select">
+            <nz-option *ngFor="let c of categories" [nzValue]="c" [nzLabel]="c"></nz-option>
+          </nz-select>
+        </div>
+
+        <div class="modal-field full">
+          <label>DIRECCIÓN DE DESPACHO</label>
+          <textarea nz-input [(ngModel)]="newSupplier.address" [nzAutosize]="{ minRows: 3, maxRows: 5 }" placeholder="Calle Ejemplo #123, Ciudad"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" (click)="closeCreateModal()">Cancelar</button>
+        <button class="btn-modal-save" (click)="saveSupplier()">Guardar Proveedor</button>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>

@@ -1,0 +1,172 @@
+<div class="inv-admin-wrapper">
+
+  <!-- HEADER -->
+  <div class="inv-header">
+    <div class="inv-header-left">
+      <h1 class="inv-title">Inventory Management</h1>
+      <p class="inv-subtitle">Manage and track your product catalog with precision.</p>
+    </div>
+    <div class="inv-header-right">
+      <div class="notif-icon" (click)="showNotifications()">
+        <span nz-icon nzType="bell" nzTheme="outline"></span>
+      </div>
+      <span class="admin-label" (click)="logout()" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        Admin User <span nz-icon nzType="logout" nzTheme="outline"></span>
+      </span>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="inv-toolbar">
+    <div class="search-box">
+      <nz-input-group [nzPrefix]="searchIcon" class="inv-search-input">
+        <input type="text" nz-input placeholder="Search product name, SKU or supplier..." [(ngModel)]="searchQuery" />
+      </nz-input-group>
+      <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn-filters">
+        <span nz-icon nzType="filter" nzTheme="outline"></span> Filters
+      </button>
+      <button class="btn-create" (click)="openCreateModal()">
+        <span nz-icon nzType="plus" nzTheme="outline"></span> Crear Producto
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="inv-table-wrap">
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>PRODUCT NAME</th>
+          <th>SELLING PRICE</th>
+          <th>DISCOUNT %</th>
+          <th>FINAL PRICE</th>
+          <th>STOCK</th>
+          <th>SUPPLIER</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of paginatedProducts">
+          <td>
+            <div class="prod-name">{{ p.name }}</div>
+            <div class="prod-sku">SKU: {{ p.sku }}</div>
+          </td>
+          <td class="cell-price">${{ p.sellingPrice | number:'1.2-2' }}</td>
+          <td class="cell-discount">
+            <span class="discount-badge" *ngIf="p.discountPercent > 0" [ngClass]="p.discountPercent >= 10 ? 'disc-high' : 'disc-low'">
+              {{ p.discountPercent }}%
+            </span>
+            <span class="no-discount" *ngIf="p.discountPercent === 0">-</span>
+          </td>
+          <td class="cell-final">${{ p.finalPrice | number:'1.2-2' }}</td>
+          <td class="cell-stock">
+            <span class="stock-indicator" [ngClass]="getStockClass(p.stock)">{{ p.stock }}</span>
+          </td>
+          <td class="cell-supplier">{{ p.supplier }}</td>
+          <td class="cell-actions">
+            <button class="action-btn" title="Edit">
+              <span nz-icon nzType="edit" nzTheme="outline"></span>
+            </button>
+            <button class="action-btn action-delete" title="Delete" (click)="deleteProduct(p)">
+              <span nz-icon nzType="delete" nzTheme="outline"></span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="inv-pagination">
+    <span class="page-info">Showing {{ paginatedProducts.length }} of {{ filteredProducts.length }} products</span>
+    <div class="page-controls">
+      <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">&lt;</button>
+      <button
+        *ngFor="let page of pageNumbers"
+        class="page-btn"
+        [class.active]="currentPage === page"
+        (click)="goToPage(page)">
+        {{ page }}
+      </button>
+      <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">&gt;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL CREAR PRODUCTO ============ -->
+<nz-modal
+  [(nzVisible)]="isCreateModalVisible"
+  [nzFooter]="null"
+  [nzClosable]="false"
+  [nzBodyStyle]="{ padding: '0', borderRadius: '12px' }"
+  nzWidth="560px"
+  nzCentered>
+  <ng-container *nzModalContent>
+    <div class="create-modal">
+      <div class="cm-header">
+        <div>
+          <h3 class="cm-title">Crear Producto</h3>
+          <p class="cm-subtitle">NEW CATALOG ENTRY</p>
+        </div>
+        <span nz-icon nzType="close" class="cm-close" (click)="closeCreateModal()"></span>
+      </div>
+
+      <div class="cm-body">
+        <!-- Product Name -->
+        <div class="cm-field full">
+          <label>PRODUCT NAME</label>
+          <input type="text" [(ngModel)]="newProduct.name" placeholder="e.g. Harina de Trigo 000" />
+        </div>
+
+        <!-- Row: Price + Discount -->
+        <div class="cm-row">
+          <div class="cm-field">
+            <label>SELLING PRICE ($)</label>
+            <input type="number" [(ngModel)]="newProduct.sellingPrice" placeholder="0.00" />
+          </div>
+          <div class="cm-field">
+            <label>DISCOUNT %</label>
+            <input type="number" [(ngModel)]="newProduct.discountPercent" placeholder="0" />
+          </div>
+        </div>
+
+        <!-- Row: Stock + Supplier -->
+        <div class="cm-row">
+          <div class="cm-field">
+            <label>INITIAL STOCK</label>
+            <input type="number" [(ngModel)]="newProduct.initialStock" placeholder="0" />
+          </div>
+          <div class="cm-field">
+            <label>SUPPLIER</label>
+            <select [(ngModel)]="newProduct.supplier">
+              <option value="" disabled>Select Supplier</option>
+              <option *ngFor="let s of suppliers" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row: SKU + Category -->
+        <div class="cm-row">
+          <div class="cm-field">
+            <label>SKU CODE</label>
+            <input type="text" [(ngModel)]="newProduct.skuCode" placeholder="ML-XXXXX" />
+          </div>
+          <div class="cm-field">
+            <label>CATEGORY</label>
+            <select [(ngModel)]="newProduct.category">
+              <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="cm-footer">
+        <button class="btn-cancel-modal" (click)="closeCreateModal()">Cancel</button>
+        <button class="btn-save-modal" (click)="saveProduct()">Guardar Producto</button>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>
