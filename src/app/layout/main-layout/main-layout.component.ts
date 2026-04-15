@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterModule } from '@angular/router';
+import { RouterOutlet, RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -15,6 +15,8 @@ import { AuthService } from '../../core/services/auth.service';
     CommonModule, 
     RouterOutlet, 
     RouterModule, 
+    RouterLink,
+    RouterLinkActive,
     FormsModule,
     NzIconModule, 
     NzMenuModule, 
