@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -20,8 +20,7 @@ import { AuthService } from '../../core/services/auth.service';
     FormsModule,
     NzIconModule, 
     NzMenuModule, 
-    NzInputModule, 
-    NzMessageModule
+    NzInputModule
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css',

@@ -1,0 +1,141 @@
+.entry-page {
+  padding: 1.5rem 0.5rem;
+}
+
+.entry-header {
+  margin-bottom: 2rem;
+}
+
+.entry-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.entry-subtitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: 1.5px;
+  margin-top: 4px;
+}
+
+.entry-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.card-glass {
+  background: white;
+  border: 1px solid #eef0f2;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.btn-register {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-primary-dark);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.btn-register:hover {
+  background: #0c1144;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 22, 95, 0.2);
+}
+
+/* ACTIVITY LIST */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.activity-item {
+  display: flex;
+  gap: 1rem;
+}
+
+.act-icon {
+  font-size: 1.2rem;
+  color: #10B981;
+  margin-top: 4px;
+}
+
+.act-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.act-product {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.act-details {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.act-user {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.h-full {
+  height: 100%;
+}

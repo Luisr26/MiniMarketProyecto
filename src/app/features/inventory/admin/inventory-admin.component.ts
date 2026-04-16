@@ -34,6 +34,8 @@ export class InventoryAdminComponent implements OnInit {
 
   searchQuery = '';
   isCreateModalVisible = false;
+  isEditMode = false;
+  editingProductId: number | null = null;
 
   // Products DB
   products: Product[] = [];
@@ -66,10 +68,10 @@ export class InventoryAdminComponent implements OnInit {
   lowStock = 45;
   outOfStock = 12;
 
-  // New Product Form
+  // New/Edit Product Form
   newProduct = {
     name: '',
-    sellingPrice: null,
+    sellingPrice: null as number | null,
     discountPercent: 0,
     initialStock: 0,
     supplier: '',
@@ -120,7 +122,24 @@ export class InventoryAdminComponent implements OnInit {
   }
 
   openCreateModal() {
+    this.isEditMode = false;
+    this.editingProductId = null;
     this.newProduct = { name: '', sellingPrice: null, discountPercent: 0, initialStock: 0, supplier: '', skuCode: '', category: 'Abarrotes' };
+    this.isCreateModalVisible = true;
+  }
+
+  openEditModal(product: Product) {
+    this.isEditMode = true;
+    this.editingProductId = product.id;
+    this.newProduct = {
+      name: product.name,
+      sellingPrice: product.sellingPrice,
+      discountPercent: product.discountPercent,
+      initialStock: product.stock,
+      supplier: product.supplier,
+      skuCode: product.sku,
+      category: product.category || 'Abarrotes'
+    };
     this.isCreateModalVisible = true;
   }
 
@@ -129,29 +148,55 @@ export class InventoryAdminComponent implements OnInit {
   }
 
   saveProduct() {
-    if (!this.newProduct.name || !this.newProduct.sellingPrice) return;
+    if (!this.newProduct.name || !this.newProduct.sellingPrice) {
+      this.message.warning('Por favor completa los campos obligatorios');
+      return;
+    }
 
     const sellingPrice = Number(this.newProduct.sellingPrice);
     const disc = Number(this.newProduct.discountPercent);
     const finalPrice = sellingPrice * (1 - disc / 100);
 
-    const newList = [...this.products];
-    newList.unshift({
-      id: this.products.length + 1,
-      name: this.newProduct.name,
-      sku: this.newProduct.skuCode || ('ML-' + Math.floor(10000 + Math.random() * 90000)),
-      sellingPrice,
-      discountPercent: disc,
-      finalPrice,
-      stock: Number(this.newProduct.initialStock),
-      supplier: this.newProduct.supplier,
-      category: this.newProduct.category
-    });
+    let newList = [...this.products];
+
+    if (this.isEditMode && this.editingProductId !== null) {
+      // Update Mode
+      newList = newList.map(p => {
+        if (p.id === this.editingProductId) {
+          return {
+            ...p,
+            name: this.newProduct.name,
+            sku: this.newProduct.skuCode,
+            sellingPrice,
+            discountPercent: disc,
+            finalPrice,
+            stock: Number(this.newProduct.initialStock),
+            supplier: this.newProduct.supplier,
+            category: this.newProduct.category
+          };
+        }
+        return p;
+      });
+      this.message.success('Producto actualizado con éxito');
+    } else {
+      // Create Mode
+      newList.unshift({
+        id: this.products.length + 1,
+        name: this.newProduct.name,
+        sku: this.newProduct.skuCode || ('ML-' + Math.floor(10000 + Math.random() * 90000)),
+        sellingPrice,
+        discountPercent: disc,
+        finalPrice,
+        stock: Number(this.newProduct.initialStock),
+        supplier: this.newProduct.supplier,
+        category: this.newProduct.category
+      });
+      this.message.success('Producto creado con éxito');
+    }
 
     this.storageService.saveProducts(newList);
     this.loadProducts();
     this.closeCreateModal();
-    this.message.success('Producto creado con éxito');
   }
 
   deleteProduct(product: Product) {

@@ -25,7 +25,7 @@
               }
             ],
             "styles": [
-              "src/theme.less",
+              "./src/theme.less",
               "src/styles.css"
             ]
           },

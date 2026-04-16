@@ -1,0 +1,100 @@
+<div class="reports-container">
+  
+  <div class="reports-header">
+    <div class="header-left">
+      <h1 class="reports-title">Reportes y Analítica</h1>
+      <p class="reports-subtitle">RESUMEN GENERAL DE RENDIMIENTO • ÚLTIMOS 7 DÍAS</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-export">
+        <span nz-icon nzType="download" nzTheme="outline"></span> Exportar PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon icon-blue">
+        <span nz-icon nzType="dollar" nzTheme="outline"></span>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">RECAUDACIÓN TOTAL</span>
+        <h2 class="kpi-value">${{ totalRevenue | number:'1.2-2' }}</h2>
+        <span class="kpi-trend trend-up">+12.5% vs semana anterior</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-green">
+        <span nz-icon nzType="shopping" nzTheme="outline"></span>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">TRANSACCIONES</span>
+        <h2 class="kpi-value">{{ totalTransactions | number }}</h2>
+        <span class="kpi-trend trend-up">+8.2% vs semana anterior</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-purple">
+        <span nz-icon nzType="thunderbolt" nzTheme="outline"></span>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">TICKET PROMEDIO</span>
+        <h2 class="kpi-value">${{ averageTicket | number:'1.2-2' }}</h2>
+        <span class="kpi-trend trend-down">-2.1% vs semana anterior</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-orange">
+        <span nz-icon nzType="star" nzTheme="outline"></span>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">CATEGORÍA TOP</span>
+        <h2 class="kpi-value">{{ topCategory }}</h2>
+        <span class="kpi-trend">Basado en volumen</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS SECTION -->
+  <div class="charts-row">
+    <!-- Weekly Performance -->
+    <div class="chart-panel performance-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Rendimiento Semanal</h3>
+        <span class="badge-light">Ventas ($)</span>
+      </div>
+      <div class="bar-chart-container">
+        <div class="bar-item" *ngFor="let day of weeklyPerformance">
+          <div class="bar-wrap">
+            <div class="bar-fill" [style.height.%]="(day.sales / 310000) * 100"></div>
+          </div>
+          <span class="day-label">{{ day.day }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Distribution -->
+    <div class="chart-panel category-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Distribución por Categoría</h3>
+      </div>
+      <div class="category-list">
+        <div class="cat-item" *ngFor="let cat of categorySales">
+          <div class="cat-info">
+            <span class="cat-dot" [style.background-color]="cat.color"></span>
+            <span class="cat-name">{{ cat.category }}</span>
+            <span class="cat-pct">{{ cat.percentage }}%</span>
+          </div>
+          <div class="cat-progress">
+            <div class="cat-progress-fill" [style.width.%]="cat.percentage" [style.background-color]="cat.color"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

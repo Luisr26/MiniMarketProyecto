@@ -1,0 +1,58 @@
+<div class="entry-page">
+  
+  <div class="entry-header">
+    <h1 class="entry-title">Entrada de Mercancía</h1>
+    <p class="entry-subtitle">REGISTRO DE STOCK Y ABASTECIMIENTO</p>
+  </div>
+
+  <div class="entry-grid">
+    <!-- Main Form -->
+    <div class="form-container">
+      <div class="card-glass">
+        <h3 class="card-title">Detalles del Ingreso</h3>
+        
+        <div class="form-field">
+          <label>PRODUCTO A ABASTECER</label>
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Selecciona un producto..." [(ngModel)]="selectedProductId" class="full-width">
+            <nz-option *ngFor="let p of products" [nzLabel]="p.name + ' (' + p.sku + ')'" [nzValue]="p.id"></nz-option>
+          </nz-select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label>CANTIDAD A INGRESAR</label>
+            <input type="number" nz-input [(ngModel)]="entryQuantity" placeholder="0" class="qty-input" />
+          </div>
+          <div class="form-field">
+            <label>REFEENCIA / NOTA (OPCIONAL)</label>
+            <input type="text" nz-input [(ngModel)]="entryNote" placeholder="Ej: Factura #992" />
+          </div>
+        </div>
+
+        <button class="btn-register" (click)="registerEntry()">
+          <span nz-icon nzType="plus-circle" nzTheme="outline"></span> Registrar Entrada
+        </button>
+      </div>
+    </div>
+
+    <!-- Recent History -->
+    <div class="history-side">
+      <div class="card-glass h-full">
+        <h3 class="card-title">Ingresos Recientes</h3>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let entry of recentEntries">
+            <div class="act-icon">
+              <span nz-icon nzType="check-circle" nzTheme="fill"></span>
+            </div>
+            <div class="act-content">
+              <span class="act-product">{{ entry.product }}</span>
+              <span class="act-details">+{{ entry.qty }} unid. &bull; {{ entry.date }}</span>
+              <span class="act-user">Por: {{ entry.user }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
