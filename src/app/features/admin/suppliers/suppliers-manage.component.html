@@ -65,7 +65,7 @@
           </td>
           <td class="cell-date">{{ s.registrationDate }}</td>
           <td class="cell-actions">
-            <span nz-icon nzType="edit" nzTheme="outline" class="action-icon"></span>
+            <span nz-icon nzType="edit" nzTheme="outline" class="action-icon" (click)="openEditModal(s)"></span>
             <span nz-icon nzType="delete" nzTheme="outline" class="action-icon delete-icon" (click)="deleteSupplier(s.id)"></span>
           </td>
         </tr>
@@ -75,7 +75,7 @@
 
   <!-- PAGINATION -->
   <div class="sup-pagination">
-    <span class="page-info">Mostrando {{ filteredSuppliers.length }} de 42 proveedores</span>
+    <span class="page-info">Mostrando {{ filteredSuppliers.length }} de {{ activeSuppliersCount }} proveedores</span>
     <div class="pagination-controls">
       <button class="btn-pag">Anterior</button>
       <button class="btn-pag-num">1</button>
@@ -87,7 +87,7 @@
 
 </div>
 
-<!-- CREATE SUPPLIER MODAL -->
+<!-- CREATE/EDIT SUPPLIER MODAL -->
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
   [nzFooter]="null"
@@ -99,8 +99,8 @@
     <div class="modal-container">
       <div class="modal-header">
         <div>
-          <h3 class="modal-title">Crear Proveedor</h3>
-          <p class="modal-subtitle">Complete los campos para registrar un nuevo socio logístico</p>
+          <h3 class="modal-title">{{ isEditMode ? 'Actualizar Proveedor' : 'Crear Proveedor' }}</h3>
+          <p class="modal-subtitle">{{ isEditMode ? 'MODIFICAR PERFIL COMPLETO' : 'REGISTRO DE SOCIO LOGÍSTICO' }}</p>
         </div>
         <span nz-icon nzType="close" class="modal-close" (click)="closeCreateModal()"></span>
       </div>
@@ -149,7 +149,7 @@
 
       <div class="modal-footer">
         <button class="btn-modal-cancel" (click)="closeCreateModal()">Cancelar</button>
-        <button class="btn-modal-save" (click)="saveSupplier()">Guardar Proveedor</button>
+        <button class="btn-modal-save" (click)="saveSupplier()">{{ isEditMode ? 'ACTUALIZAR PROVEEDOR' : 'GUARDAR PROVEEDOR' }}</button>
       </div>
     </div>
   </ng-container>

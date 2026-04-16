@@ -89,7 +89,7 @@
           <div class="pill-avatar"></div>
         </div>
         
-        <div class="logout-btn-wrap ml-4" (click)="logout()">
+        <div class="logout-btn-wrap ml-4" (click)="logout()" *ngIf="isDashboard">
           <span nz-icon nzType="logout" nzTheme="outline" class="nav-icon logout-icon"></span>
         </div>
       </div>

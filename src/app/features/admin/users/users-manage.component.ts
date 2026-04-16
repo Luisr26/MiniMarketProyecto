@@ -31,18 +31,20 @@ interface User {
 export class UsersManageComponent implements OnInit {
   searchQuery = '';
   isDrawerVisible = false;
+  isEditMode = false;
+  editingUserId: number | null = null;
 
   // Stats
   totalUsers = 0;
   activeNow = 0;
   pendingUsers = 2;
 
-  // New User Form
+  // New/Edit User Form
   newUser = {
     fullName: '',
     email: '',
     role: 'Seleccionar...',
-    status: 'Activo',
+    status: 'Activo' as 'Activo' | 'Inactivo',
     password: ''
   };
 
@@ -77,7 +79,22 @@ export class UsersManageComponent implements OnInit {
   }
 
   openCreateDrawer() {
+    this.isEditMode = false;
+    this.editingUserId = null;
     this.newUser = { fullName: '', email: '', role: 'Seleccionar...', status: 'Activo', password: '' };
+    this.isDrawerVisible = true;
+  }
+
+  openEditDrawer(user: User) {
+    this.isEditMode = true;
+    this.editingUserId = user.id;
+    this.newUser = {
+      fullName: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+      password: '' // Optional password reset usually
+    };
     this.isDrawerVisible = true;
   }
 
@@ -86,22 +103,51 @@ export class UsersManageComponent implements OnInit {
   }
 
   saveUser() {
-    if (!this.newUser.fullName.trim()) return;
+    if (!this.newUser.fullName.trim() || !this.newUser.email.trim()) {
+      this.message.warning('Por favor completa los campos básicos.');
+      return;
+    }
 
-    const newList = [...this.users];
-    newList.unshift({
-      id: this.users.length + 1,
-      name: this.newUser.fullName,
-      email: this.newUser.email,
-      role: this.newUser.role as any,
-      status: this.newUser.status as any,
-      lastLogin: 'Nunca'
-    });
+    let newList = [...this.users];
+
+    if (this.isEditMode && this.editingUserId !== null) {
+      // Update Mode
+      newList = newList.map(u => {
+        if (u.id === this.editingUserId) {
+          return {
+            ...u,
+            name: this.newUser.fullName,
+            email: this.newUser.email,
+            role: this.newUser.role as any,
+            status: this.newUser.status as any
+          };
+        }
+        return u;
+      });
+      this.message.success('Usuario actualizado con éxito');
+    } else {
+      // Create Mode
+      newList.unshift({
+        id: this.users.length + 1,
+        name: this.newUser.fullName,
+        email: this.newUser.email,
+        role: this.newUser.role as any,
+        status: this.newUser.status as any,
+        lastLogin: 'Nunca'
+      });
+      this.message.success('Usuario creado con éxito');
+    }
 
     this.storageService.saveUsers(newList);
     this.loadUsers();
     this.closeCreateDrawer();
-    this.message.success('Usuario creado con éxito');
+  }
+
+  deleteUser(id: number) {
+    const newList = this.users.filter(u => u.id !== id);
+    this.storageService.saveUsers(newList);
+    this.loadUsers();
+    this.message.warning('Usuario eliminado');
   }
 
   logout() {

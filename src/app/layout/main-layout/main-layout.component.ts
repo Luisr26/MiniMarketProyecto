@@ -1,11 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -31,10 +25,12 @@ export class MainLayoutComponent implements OnInit {
   role: 'admin' | 'bodeguero' | 'cajero' = 'admin';
   userName = 'User';
   searchQuery = '';
+  isDashboard = true;
 
   constructor(
     private authService: AuthService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -44,6 +40,23 @@ export class MainLayoutComponent implements OnInit {
         this.userName = user.name;
       }
     });
+
+    // Initial check
+    this.checkDashboard(this.router.url);
+
+    // Track navigation changes
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.checkDashboard(event.urlAfterRedirects);
+    });
+  }
+
+  private checkDashboard(url: string) {
+    // Exact dashboard paths for admin and bodeguero
+    const cleanUrl = url.split('?')[0]; // Remove query params
+    this.isDashboard = cleanUrl === '/admin' || cleanUrl === '/admin/' || 
+                      cleanUrl === '/bodeguero' || cleanUrl === '/bodeguero/';
   }
 
   logout() {

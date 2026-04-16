@@ -67,7 +67,12 @@
           </td>
           <td class="cell-login">{{ u.lastLogin }}</td>
           <td class="cell-actions text-right">
-            <span nz-icon nzType="more" nzTheme="outline" class="action-more"></span>
+            <button class="action-btn" title="Editar" (click)="openEditDrawer(u)">
+              <span nz-icon nzType="edit" nzTheme="outline"></span>
+            </button>
+            <button class="action-btn action-delete" title="Eliminar" (click)="deleteUser(u.id)">
+              <span nz-icon nzType="delete" nzTheme="outline"></span>
+            </button>
           </td>
         </tr>
       </tbody>
@@ -76,7 +81,7 @@
 
   <!-- TABLE FOOTER -->
   <div class="user-table-footer">
-    <span class="footer-info">Mostrando {{ filteredUsers.length }} de 24 usuarios</span>
+    <span class="footer-info">Mostrando {{ filteredUsers.length }} de {{ totalUsers }} usuarios</span>
     <div class="footer-pagination">
       <span nz-icon nzType="left" nzTheme="outline" class="pag-arrow disabled"></span>
       <span class="pag-num active">1</span>
@@ -87,7 +92,7 @@
 
 </div>
 
-<!-- CREATE USER DRAWER (Right Slide-over) -->
+<!-- CREATE/EDIT USER DRAWER (Right Slide-over) -->
 <nz-drawer
   [nzVisible]="isDrawerVisible"
   [nzClosable]="false"
@@ -98,8 +103,8 @@
     <div class="drawer-container">
       <div class="drawer-header">
         <div class="drawer-title-group">
-          <h2 class="drawer-title">Crear Usuario</h2>
-          <span class="drawer-subtitle">NUEVO REGISTRO</span>
+          <h2 class="drawer-title">{{ isEditMode ? 'Actualizar Usuario' : 'Crear Usuario' }}</h2>
+          <span class="drawer-subtitle">{{ isEditMode ? 'EDITAR PERFIL' : 'NUEVO REGISTRO' }}</span>
         </div>
         <span nz-icon nzType="close" class="drawer-close" (click)="closeCreateDrawer()"></span>
       </div>
@@ -139,7 +144,7 @@
           </div>
         </div>
 
-        <div class="drawer-field">
+        <div class="drawer-field" *ngIf="!isEditMode">
           <label>CONTRASEÑA TEMPORAL</label>
           <nz-input-group [nzSuffix]="suffixTemplate">
             <input [type]="'password'" nz-input [(ngModel)]="newUser.password" placeholder="********" />
@@ -150,7 +155,7 @@
           <p class="field-hint">Se le pedirá al usuario cambiar su contraseña en el primer inicio de sesión.</p>
         </div>
 
-        <button class="btn-save-user" (click)="saveUser()">GUARDAR USUARIO</button>
+        <button class="btn-save-user" (click)="saveUser()">{{ isEditMode ? 'ACTUALIZAR USUARIO' : 'GUARDAR USUARIO' }}</button>
         <button class="btn-cancel-user" (click)="closeCreateDrawer()">CANCELAR</button>
 
         <!-- Safety Box -->
