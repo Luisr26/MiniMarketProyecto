@@ -8,65 +8,6 @@
   background: #fff;
 }
 
-/* ===== TOP BAR ===== */
-.inv-bod-topbar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.topbar-icon {
-  width: 40px;
-  height: 40px;
-  background: #f3f4f6;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #4b5563;
-  font-size: 1.1rem;
-  cursor: pointer;
-}
-
-.topbar-user {
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-  margin-left: 0.5rem;
-}
-.user-name {
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #1f2937;
-}
-.user-role {
-  font-size: 0.65rem;
-  color: #9ca3af;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  background: #E5E7EB;
-  border-radius: 8px; /* Square with radius in mockup */
-}
-
-.logout-link {
-  font-size: 0.85rem;
-  color: #10165F;
-  font-weight: 700;
-  text-decoration: none;
-}
-
 /* ===== HEADER ===== */
 .inv-bod-header {
   display: flex;
