@@ -65,8 +65,12 @@
           </td>
           <td class="cell-date">{{ s.registrationDate }}</td>
           <td class="cell-actions">
-            <span nz-icon nzType="edit" nzTheme="outline" class="action-icon" (click)="openEditModal(s)"></span>
-            <span nz-icon nzType="delete" nzTheme="outline" class="action-icon delete-icon" (click)="deleteSupplier(s.id)"></span>
+            <button class="action-btn" title="Editar" (click)="openEditModal(s)">
+              <span nz-icon nzType="edit" nzTheme="outline"></span>
+            </button>
+            <button class="action-btn action-delete" title="Eliminar" (click)="deleteSupplier(s.id)">
+              <span nz-icon nzType="delete" nzTheme="outline"></span>
+            </button>
           </td>
         </tr>
       </tbody>

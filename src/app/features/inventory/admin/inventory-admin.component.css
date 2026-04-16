@@ -224,12 +224,29 @@
 }
 
 .action-btn {
-  background: transparent;
+  background: #f3f4f6;
   border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  color: #D1D5DB;
-  font-size: 1.2rem;
-  padding: 4px;
+  color: #6b7280;
+  transition: all 0.2s;
+  margin-left: 6px;
+}
+
+.action-btn:hover {
+  background: #e5e7eb;
+  color: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+.action-delete:hover {
+  background: #fee2e2 !important;
+  color: #ef4444 !important;
 }
 
 /* ===== PAGINATION ===== */

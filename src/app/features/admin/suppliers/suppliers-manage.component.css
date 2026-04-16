@@ -320,19 +320,30 @@
   font-weight: 500;
 }
 
-.cell-actions {
-  display: flex;
-  gap: 1.25rem;
+.action-btn {
+  background: #f3f4f6;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #9CA3AF;
+  transition: all 0.2s;
 }
 
-.action-icon {
-  font-size: 1.3rem;
-  color: #9CA3AF;
-  cursor: pointer;
-  transition: color 0.2s;
+.action-btn:hover {
+  background: #E5E7EB;
+  color: #10165F;
+  transform: translateY(-2px);
 }
-.action-icon:hover { color: #10165F; }
-.delete-icon:hover { color: #EF4444; }
+
+.action-delete:hover {
+  background: #FEE2E2 !important;
+  color: #EF4444 !important;
+}
 
 /* ===== PAGINATION ===== */
 .sup-pagination {
