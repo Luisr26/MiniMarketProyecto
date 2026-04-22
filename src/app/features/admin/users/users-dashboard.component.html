@@ -1,0 +1,179 @@
+<div class="users-dashboard">
+  
+  <!-- HEADER -->
+  <div class="dashboard-header">
+    <div>
+      <h1 class="page-title">Gestión de Usuarios</h1>
+      <p class="page-subtitle">Control y administración de equipo</p>
+    </div>
+    <div class="view-controls">
+      <button 
+        nz-button 
+        [nzType]="viewMode === 'cards' ? 'primary' : 'default'"
+        (click)="switchViewMode('cards')">
+        <span nz-icon nzType="appstore" nzTheme="outline"></span>
+        Vista de tarjetas
+      </button>
+      <button 
+        nz-button 
+        [nzType]="viewMode === 'table' ? 'primary' : 'default'"
+        (click)="switchViewMode('table')">
+        <span nz-icon nzType="unordered-list" nzTheme="outline"></span>
+        Vista de tabla
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon icon-blue">
+        <span nz-icon nzType="team" nzTheme="outline"></span>
+      </div>
+      <div>
+        <p class="stat-label">TOTAL USUARIOS</p>
+        <h3 class="stat-value">{{ totalUsers }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-green">
+        <span nz-icon nzType="check-circle" nzTheme="fill"></span>
+      </div>
+      <div>
+        <p class="stat-label">USUARIOS ACTIVOS</p>
+        <h3 class="stat-value">{{ activeUsers }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-yellow">
+        <span nz-icon nzType="plus-circle" nzTheme="fill"></span>
+      </div>
+      <div>
+        <p class="stat-label">NUEVOS (30 DÍAS)</p>
+        <h3 class="stat-value">{{ newUsersThisMonth }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY CHART -->
+  <div class="chart-section card">
+    <div class="chart-header">
+      <h2>Actividad de Usuarios</h2>
+      <p class="chart-subtitle">Logins en los últimos 30 días</p>
+    </div>
+    <div *ngIf="activityChartOptions" style="min-height: 300px;">
+      <apx-chart
+        [series]="activityChartOptions.series"
+        [chart]="activityChartOptions.chart"
+        [colors]="activityChartOptions.colors"
+        [xaxis]="activityChartOptions.xaxis"
+        [yaxis]="activityChartOptions.yaxis"
+        [stroke]="activityChartOptions.stroke"
+        [fill]="activityChartOptions.fill"
+        [grid]="activityChartOptions.grid">
+      </apx-chart>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-section">
+    <nz-input-group [nzPrefix]="searchIcon" class="search-box">
+      <input type="text" nz-input placeholder="Buscar usuario por nombre o email..." 
+             [ngModel]="searchQuery" 
+             (ngModelChange)="searchQuery = $event; onFilterChange()" />
+    </nz-input-group>
+    <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+
+    <nz-select 
+      [(ngModel)]="filterRole" 
+      (ngModelChange)="onFilterChange()"
+      nzPlaceHolder="Rol"
+      nzAllowClear
+      style="width: 150px;">
+      <nz-option nzValue="admin" nzLabel="Administrador"></nz-option>
+      <nz-option nzValue="bodeguero" nzLabel="Bodeguero"></nz-option>
+      <nz-option nzValue="vendedor" nzLabel="Vendedor"></nz-option>
+    </nz-select>
+
+    <nz-select 
+      [(ngModel)]="filterStatus" 
+      (ngModelChange)="onFilterChange()"
+      nzPlaceHolder="Estado"
+      nzAllowClear
+      style="width: 150px;">
+      <nz-option nzValue="Activo" nzLabel="✓ Activo"></nz-option>
+      <nz-option nzValue="Inactivo" nzLabel="✗ Inactivo"></nz-option>
+    </nz-select>
+  </div>
+
+  <!-- CARDS VIEW -->
+  <div *ngIf="viewMode === 'cards'" class="cards-container">
+    <div *ngFor="let user of filteredUsers" class="user-card">
+      <div class="card-header">
+        <div class="user-avatar">
+          {{ (user.name | titlecase).substring(0, 2).toUpperCase() }}
+        </div>
+        <div class="card-status">
+          <span class="status-indicator" [class.active]="user.status === 'Activo'"></span>
+          <span class="status-text">{{ user.status }}</span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h3 class="user-name">{{ user.name }}</h3>
+        <p class="user-email">{{ user.email }}</p>
+
+        <div class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
+          {{ getRoleLabel(user.role) }}
+        </div>
+
+        <div class="card-meta">
+          <div class="meta-item">
+            <span class="meta-label">Logins</span>
+            <span class="meta-value">{{ user.loginCount }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Último acceso</span>
+            <span class="meta-value">{{ user.lastLogin }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Actividad</span>
+            <div class="activity-bar">
+              <div class="activity-fill" [style.width.%]="user.activityScore"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button nz-button nzType="text" nzSize="small" (click)="editUser(user)">
+          <span nz-icon nzType="edit" nzTheme="outline"></span>
+          Editar
+        </button>
+        <button nz-button nzType="text" nzSize="small" nzDanger (click)="deleteUser(user)">
+          <span nz-icon nzType="delete" nzTheme="outline"></span>
+          Eliminar
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="filteredUsers.length === 0 && !isLoading" class="empty-state">
+      <span nz-icon nzType="team" nzTheme="outline" class="text-3xl mb-md"></span>
+      <p>No se encontraron usuarios</p>
+    </div>
+  </div>
+
+  <!-- TABLE VIEW -->
+  <div *ngIf="viewMode === 'table'" class="table-section card">
+    <!-- Table HTML would go here - similar to previous implementations -->
+    <p class="text-center text-secondary py-lg">Vista de tabla en desarrollo</p>
+  </div>
+
+  <!-- FLOATING ACTION BUTTON -->
+  <button class="fab" (click)="createNewUser()" nz-button nzType="primary" nzShape="circle">
+    <span nz-icon nzType="plus" nzTheme="outline"></span>
+  </button>
+
+</div>

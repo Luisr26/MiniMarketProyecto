@@ -1,0 +1,163 @@
+<div class="reports-container">
+  
+  <!-- HEADER -->
+  <div class="reports-header">
+    <div>
+      <h1 class="page-title">Reportes Avanzados</h1>
+      <p class="page-subtitle">Análisis detallado de rendimiento y métricas</p>
+    </div>
+    <div class="export-buttons">
+      <button nz-button nzType="primary" (click)="exportToPDF()">
+        <span nz-icon nzType="file-pdf" nzTheme="outline"></span>
+        PDF
+      </button>
+      <button nz-button nzType="default" (click)="exportToExcel()">
+        <span nz-icon nzType="file-excel" nzTheme="outline"></span>
+        Excel
+      </button>
+      <button nz-button nzType="default" (click)="printReport()">
+        <span nz-icon nzType="printer" nzTheme="outline"></span>
+        Imprimir
+      </button>
+    </div>
+  </div>
+
+  <!-- PERIOD SELECTOR -->
+  <div class="period-selector">
+    <div class="selector-group">
+      <button 
+        *ngFor="let period of ['thisMonth', 'lastMonth', 'thisQuarter', 'thisYear']"
+        nz-button 
+        [nzType]="reportPeriod === period ? 'primary' : 'default'"
+        (click)="onPeriodChange(period)">
+        {{ period === 'thisMonth' ? 'Este mes' : period === 'lastMonth' ? 'Mes pasado' : period === 'thisQuarter' ? 'Este trimestre' : 'Este año' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI STATS -->
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-icon sales">
+        <span nz-icon nzType="shopping-cart" nzTheme="outline"></span>
+      </div>
+      <div>
+        <p class="stat-label">TOTAL VENTAS</p>
+        <h3 class="stat-value">${{ (totalSales / 1000).toFixed(1) }}K</h3>
+      </div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-icon purchases">
+        <span nz-icon nzType="shopping" nzTheme="outline"></span>
+      </div>
+      <div>
+        <p class="stat-label">TOTAL COMPRAS</p>
+        <h3 class="stat-value">${{ (totalPurchases / 1000).toFixed(1) }}K</h3>
+      </div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-icon ratio">
+        <span nz-icon nzType="fund" nzTheme="outline"></span>
+      </div>
+      <div>
+        <p class="stat-label">RATIO VENTAS/COMPRAS</p>
+        <h3 class="stat-value">{{ salesToPurchasesRatio }}:1</h3>
+      </div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-icon critical">
+        <span nz-icon nzType="warning" nzTheme="fill"></span>
+      </div>
+      <div>
+        <p class="stat-label">STOCK CRÍTICO</p>
+        <h3 class="stat-value">{{ criticalStockItems }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS GRID -->
+  <div class="charts-grid">
+    
+    <!-- Sales vs Purchases Chart -->
+    <div class="chart-card full-width">
+      <div class="chart-header">
+        <h2>Ventas vs Compras</h2>
+        <p class="chart-subtitle">Comparación mensual de ingresos y egresos</p>
+      </div>
+      <div *ngIf="salesVsPurchasesChart" style="min-height: 320px;">
+        <apx-chart
+          [series]="salesVsPurchasesChart.series"
+          [chart]="salesVsPurchasesChart.chart"
+          [colors]="salesVsPurchasesChart.colors"
+          [xaxis]="salesVsPurchasesChart.xaxis"
+          [legend]="salesVsPurchasesChart.legend"
+          [grid]="salesVsPurchasesChart.grid">
+        </apx-chart>
+      </div>
+    </div>
+
+    <!-- Critical Stock Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h2>Stock Crítico</h2>
+        <p class="chart-subtitle">Productos con bajo inventario</p>
+      </div>
+      <div *ngIf="criticalStockChart" style="min-height: 280px;">
+        <apx-chart
+          [series]="criticalStockChart.series"
+          [chart]="criticalStockChart.chart"
+          [colors]="criticalStockChart.colors"
+          [xaxis]="criticalStockChart.xaxis"
+          [grid]="criticalStockChart.grid">
+        </apx-chart>
+      </div>
+    </div>
+
+    <!-- Monthly Comparison Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h2>Comparación Mensual</h2>
+        <p class="chart-subtitle">Ingresos vs Gastos</p>
+      </div>
+      <div *ngIf="monthlyComparisonChart" style="min-height: 320px;">
+        <apx-chart
+          [series]="monthlyComparisonChart.series"
+          [chart]="monthlyComparisonChart.chart"
+          [colors]="monthlyComparisonChart.colors"
+          [xaxis]="monthlyComparisonChart.xaxis"
+          [stroke]="monthlyComparisonChart.stroke"
+          [legend]="monthlyComparisonChart.legend"
+          [grid]="monthlyComparisonChart.grid">
+        </apx-chart>
+      </div>
+    </div>
+
+    <!-- Category Performance Chart -->
+    <div class="chart-card full-width">
+      <div class="chart-header">
+        <h2>Desempeño por Categoría</h2>
+        <p class="chart-subtitle">Análisis de ventas por categoría de productos</p>
+      </div>
+      <div *ngIf="categoryPerformanceChart" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
+        <apx-chart
+          [series]="categoryPerformanceChart.series"
+          [chart]="categoryPerformanceChart.chart"
+          [colors]="categoryPerformanceChart.colors"
+          [xaxis]="categoryPerformanceChart.xaxis"
+          [legend]="categoryPerformanceChart.legend">
+        </apx-chart>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <span class="spinner"></span>
+    <p>Generando reportes...</p>
+  </div>
+
+</div>

@@ -1,174 +1,194 @@
-<div class="user-manage-wrapper">
+<div class="users-wrapper">
 
-  <!-- STATS HEADER ROW -->
-  <div class="user-stats-container">
-    <div class="stats-left">
-      <div class="stat-group">
-        <span class="stat-label">TOTAL USUARIOS</span>
-        <span class="stat-val">{{ totalUsers }}</span>
+  <!-- HEADER -->
+  <div class="users-header">
+    <div>
+      <h1 class="users-title">Gestión de Usuarios</h1>
+      <p class="users-subtitle">ADMINISTRACIÓN DE ACCESOS Y ROLES DEL SISTEMA</p>
+    </div>
+    <button class="btn-create-user" (click)="openCreateDrawer()">
+      <span nz-icon nzType="plus" nzTheme="outline"></span> Nuevo Usuario
+    </button>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="users-stats-row">
+    <div class="user-stat-card">
+      <div class="ustat-icon ustat-blue">
+        <span nz-icon nzType="team" nzTheme="outline"></span>
       </div>
-      <div class="stat-group">
-        <span class="stat-label">ACTIVOS AHORA</span>
-        <span class="stat-val text-green">{{ activeNow }}</span>
-      </div>
-      <div class="stat-group">
-        <span class="stat-label">PENDIENTES</span>
-        <span class="stat-val text-orange">{{ pendingUsers }}</span>
-      </div>
-      <div class="stats-search">
-        <nz-input-group [nzPrefix]="searchIcon" class="user-search-input">
-          <input type="text" nz-input placeholder="Buscar por nombre..." [(ngModel)]="searchQuery" />
-        </nz-input-group>
-        <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+      <div class="ustat-info">
+        <span class="ustat-label">TOTAL USUARIOS</span>
+        <span class="ustat-value">{{ totalUsers }}</span>
       </div>
     </div>
 
-    <div class="audit-card">
-      <div class="audit-content">
-        <span class="audit-tag">SEGURIDAD</span>
-        <h3 class="audit-title">Auditoría de Accesos</h3>
-        <p class="audit-desc">Revisa los últimos inicios de sesión y cambios de roles.</p>
+    <div class="user-stat-card">
+      <div class="ustat-icon ustat-green">
+        <span nz-icon nzType="check-circle" nzTheme="outline"></span>
       </div>
-      <div class="audit-icon-box">
-        <span nz-icon nzType="safety-certificate" nzTheme="outline"></span>
+      <div class="ustat-info">
+        <span class="ustat-label">ACTIVOS AHORA</span>
+        <span class="ustat-value">{{ activeNow }}</span>
+      </div>
+    </div>
+
+    <div class="user-stat-card">
+      <div class="ustat-icon ustat-orange">
+        <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+      </div>
+      <div class="ustat-info">
+        <span class="ustat-label">PENDIENTES</span>
+        <span class="ustat-value">{{ pendingUsers }}</span>
       </div>
     </div>
   </div>
 
-  <!-- TABLE SECTION -->
-  <div class="user-table-wrap">
-    <table class="user-table">
+  <!-- SEARCH -->
+  <div class="users-toolbar">
+    <nz-input-group [nzPrefix]="searchIcon" class="users-search">
+      <input type="text" nz-input placeholder="Buscar por nombre o correo..." [(ngModel)]="searchQuery" />
+    </nz-input-group>
+    <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+  </div>
+
+  <!-- TABLE -->
+  <div class="users-table-wrap">
+    <table class="users-table">
       <thead>
         <tr>
           <th>USUARIO</th>
           <th>ROL</th>
           <th>ESTADO</th>
-          <th>ÚLTIMA CONEXIÓN</th>
-          <th class="text-right">ACCIONES</th>
+          <th>ÚLTIMO ACCESO</th>
+          <th class="th-center">ACCIONES</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let u of filteredUsers">
+        <tr *ngFor="let u of filteredUsers" class="row-hover">
           <td class="cell-user">
-            <div class="user-avatar-placeholder"></div>
-            <div class="user-info">
+            <div class="user-avatar" [ngClass]="'avatar-' + u.role.toLowerCase()">
+              {{ u.name.charAt(0) }}
+            </div>
+            <div class="user-details">
               <span class="user-name">{{ u.name }}</span>
               <span class="user-email">{{ u.email }}</span>
             </div>
           </td>
           <td>
-            <span class="role-badge" [ngClass]="'role-' + u.role.toLowerCase()">{{ u.role }}</span>
+            <span class="role-badge" [ngClass]="'role-' + u.role.toLowerCase()">
+              {{ u.role }}
+            </span>
           </td>
           <td>
-            <div class="status-indicator">
-              <span class="status-dot" [ngClass]="u.status === 'Activo' ? 'dot-active' : 'dot-inactive'"></span>
-              <span class="status-text">{{ u.status }}</span>
-            </div>
+            <span class="status-pill" [ngClass]="u.status === 'Activo' ? 'status-active' : 'status-inactive'">
+              <span class="status-dot"></span>
+              {{ u.status }}
+            </span>
           </td>
           <td class="cell-login">{{ u.lastLogin }}</td>
-          <td class="cell-actions text-right">
-            <button class="action-btn" title="Editar" (click)="openEditDrawer(u)">
-              <span nz-icon nzType="edit" nzTheme="outline"></span>
-            </button>
-            <button class="action-btn action-delete" title="Eliminar" (click)="deleteUser(u.id)">
-              <span nz-icon nzType="delete" nzTheme="outline"></span>
-            </button>
+          <td class="cell-actions">
+            <div class="actions-row">
+              <button class="act-btn act-edit" title="Editar" (click)="openEditDrawer(u)">
+                <span nz-icon nzType="edit" nzTheme="outline"></span>
+              </button>
+              <button class="act-btn act-del" title="Eliminar" (click)="confirmDelete(u)">
+                <span nz-icon nzType="delete" nzTheme="outline"></span>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
-  </div>
-
-  <!-- TABLE FOOTER -->
-  <div class="user-table-footer">
-    <span class="footer-info">Mostrando {{ filteredUsers.length }} de {{ totalUsers }} usuarios</span>
-    <div class="footer-pagination">
-      <span nz-icon nzType="left" nzTheme="outline" class="pag-arrow disabled"></span>
-      <span class="pag-num active">1</span>
-      <span class="pag-num">2</span>
-      <span nz-icon nzType="right" nzTheme="outline" class="pag-arrow"></span>
+    <div *ngIf="filteredUsers.length === 0" class="empty-state">
+      <span nz-icon nzType="inbox" nzTheme="outline"></span>
+      <p>No se encontraron usuarios</p>
     </div>
   </div>
-
 </div>
 
-<!-- CREATE/EDIT USER DRAWER (Right Slide-over) -->
-<nz-drawer
-  [nzVisible]="isDrawerVisible"
-  [nzClosable]="false"
-  [nzWidth]="480"
-  nzPlacement="right"
-  (nzOnClose)="closeCreateDrawer()">
-  <ng-container *nzDrawerContent>
-    <div class="drawer-container">
-      <div class="drawer-header">
-        <div class="drawer-title-group">
-          <h2 class="drawer-title">{{ isEditMode ? 'Actualizar Usuario' : 'Crear Usuario' }}</h2>
-          <span class="drawer-subtitle">{{ isEditMode ? 'EDITAR PERFIL' : 'NUEVO REGISTRO' }}</span>
-        </div>
-        <span nz-icon nzType="close" class="drawer-close" (click)="closeCreateDrawer()"></span>
-      </div>
-
-      <div class="drawer-body">
-        <!-- Photo Upload Placeholder -->
-        <div class="photo-upload-container">
-          <div class="photo-box">
-            <span nz-icon nzType="camera" nzTheme="outline"></span>
-            <span class="photo-label">FOTO</span>
-          </div>
-          <p class="photo-hint">Formatos: JPG, PNG (Max 2MB)</p>
-        </div>
-
-        <div class="drawer-field">
-          <label>NOMBRE COMPLETO</label>
-          <input type="text" nz-input [(ngModel)]="newUser.fullName" placeholder="Ej. Juan Pérez" />
-        </div>
-
-        <div class="drawer-field">
-          <label>CORREO ELECTRÓNICO</label>
-          <input type="email" nz-input [(ngModel)]="newUser.email" placeholder="nombre@medialuna.com" />
-        </div>
-
-        <div class="drawer-row">
-          <div class="drawer-field">
-            <label>ROL DE SISTEMA</label>
-            <nz-select [(ngModel)]="newUser.role" class="drawer-select">
-              <nz-option *ngFor="let r of roles" [nzLabel]="r" [nzValue]="r"></nz-option>
-            </nz-select>
-          </div>
-          <div class="drawer-field">
-            <label>ESTADO INICIAL</label>
-            <nz-select [(ngModel)]="newUser.status" class="drawer-select">
-              <nz-option *ngFor="let s of statuses" [nzLabel]="s" [nzValue]="s"></nz-option>
-            </nz-select>
-          </div>
-        </div>
-
-        <div class="drawer-field" *ngIf="!isEditMode">
-          <label>CONTRASEÑA TEMPORAL</label>
-          <nz-input-group [nzSuffix]="suffixTemplate">
-            <input [type]="'password'" nz-input [(ngModel)]="newUser.password" placeholder="********" />
-          </nz-input-group>
-          <ng-template #suffixTemplate>
-            <span nz-icon nzType="eye" nzTheme="outline" class="pwd-toggle"></span>
-          </ng-template>
-          <p class="field-hint">Se le pedirá al usuario cambiar su contraseña en el primer inicio de sesión.</p>
-        </div>
-
-        <button class="btn-save-user" (click)="saveUser()">{{ isEditMode ? 'ACTUALIZAR USUARIO' : 'GUARDAR USUARIO' }}</button>
-        <button class="btn-cancel-user" (click)="closeCreateDrawer()">CANCELAR</button>
-
-        <!-- Safety Box -->
-        <div class="safety-box">
-          <div class="safety-inner">
-            <span nz-icon nzType="info-circle" nzTheme="outline" class="safety-icon"></span>
-            <div class="safety-content">
-              <h4 class="safety-title">CONSEJO DE SEGURIDAD</h4>
-              <p class="safety-text">Los Cajeros solo tienen acceso al módulo POS y no pueden ver informes de inventario.</p>
-            </div>
-          </div>
-        </div>
+<!-- MODAL REDISEÑADO CON NG-ZORRO -->
+<nz-modal
+  [(nzVisible)]="isDrawerVisible"
+  [nzTitle]="userModalTitle"
+  [nzFooter]="userModalFooter"
+  nzWidth="40vw"
+  [nzCentered]="true"
+  (nzOnCancel)="closeCreateDrawer()">
+  
+  <ng-template #userModalTitle>
+    <div class="modal-header-p">
+      <span nz-icon [nzType]="isEditMode ? 'user' : 'user-add'" nzTheme="outline" class="m-icon"></span>
+      <div class="m-text">
+        <div class="m-title">{{ isEditMode ? 'Editar Usuario' : 'Nuevo Miembro' }}</div>
+        <div class="m-subtitle">Gestión de accesos y roles del sistema</div>
       </div>
     </div>
+  </ng-template>
+
+  <ng-container *nzModalContent>
+    <form nz-form nzLayout="vertical" class="compact-form">
+      <!-- Nombre Completo -->
+      <nz-form-item>
+        <nz-form-label nzRequired>Nombre Completo</nz-form-label>
+        <nz-form-control>
+          <nz-input-group nzPrefixIcon="user">
+            <input type="text" nz-input [(ngModel)]="newUser.fullName" name="fullName" placeholder="Ej. Juan Pérez" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- Correo -->
+      <nz-form-item>
+        <nz-form-label nzRequired>Correo Electrónico</nz-form-label>
+        <nz-form-control>
+          <nz-input-group nzPrefixIcon="mail">
+            <input type="email" nz-input [(ngModel)]="newUser.email" name="email" placeholder="usuario@medialuna.com" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div nz-row [nzGutter]="16">
+        <!-- Rol -->
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label>Rol del Sistema</nz-form-label>
+            <nz-form-control>
+              <nz-select [(ngModel)]="newUser.role" name="role" nzPlaceHolder="Seleccionar rol">
+                <nz-option *ngFor="let r of roles" [nzValue]="r" [nzLabel]="r"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <!-- Estado -->
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label>Estado de Cuenta</nz-form-label>
+            <nz-form-control>
+              <nz-select [(ngModel)]="newUser.status" name="status">
+                <nz-option *ngFor="let s of statuses" [nzValue]="s" [nzLabel]="s"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <nz-form-item *ngIf="!isEditMode">
+        <nz-form-label>Contraseña de Acceso</nz-form-label>
+        <nz-form-control>
+          <nz-input-group nzPrefixIcon="lock">
+            <input type="password" nz-input [(ngModel)]="newUser.password" name="password" placeholder="••••••••" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
   </ng-container>
-</nz-drawer>
+
+  <ng-template #userModalFooter>
+    <button nz-button nzType="default" (click)="closeCreateDrawer()">Cancelar</button>
+    <button nz-button nzType="primary" (click)="saveUser()" class="btn-save-nz">
+      {{ isEditMode ? 'Actualizar Usuario' : 'Confirmar Registro' }}
+    </button>
+  </ng-template>
+</nz-modal>

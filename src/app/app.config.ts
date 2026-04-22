@@ -13,22 +13,32 @@ import {
   UserOutline, LockOutline, EyeOutline, EyeInvisibleOutline, AppstoreOutline,
   ShopOutline, InboxOutline, CarOutline, TeamOutline, BarChartOutline,
   PlusSquareOutline, HistoryOutline, PlusOutline, QuestionCircleOutline,
-  SettingOutline, BellOutline, LogoutOutline, DollarOutline, WarningOutline,
+  SettingOutline, BellOutline, LogoutOutline, DollarOutline, DollarCircleOutline, WarningOutline,
   LineChartOutline, SearchOutline, FilterOutline, MoreOutline, BarcodeOutline,
   WarningFill, DeleteOutline, ShoppingCartOutline, MoneyCollectOutline,
   WalletFill, CheckCircleOutline, PrinterOutline, MailOutline, CreditCardOutline,
-  QrcodeOutline, SyncOutline, CloseOutline, ShopFill
+  QrcodeOutline, SyncOutline, CloseOutline, ShopFill, RiseOutline,
+  InfoCircleOutline, SafetyCertificateOutline, CameraOutline, ClockCircleOutline,
+  PlusCircleOutline, DownloadOutline, EditOutline, FrownOutline, PhoneOutline,
+  LeftOutline, RightOutline, ControlOutline, StarOutline, ThunderboltOutline,
+  ShoppingOutline, CalendarOutline, FileTextOutline, SwapOutline,
+  EnvironmentOutline, NumberOutline, ProfileOutline
 } from '@ant-design/icons-angular/icons';
 
 const icons = [
   UserOutline, LockOutline, EyeOutline, EyeInvisibleOutline, AppstoreOutline,
   ShopOutline, InboxOutline, CarOutline, TeamOutline, BarChartOutline,
   PlusSquareOutline, HistoryOutline, PlusOutline, QuestionCircleOutline,
-  SettingOutline, BellOutline, LogoutOutline, DollarOutline, WarningOutline,
+  SettingOutline, BellOutline, LogoutOutline, DollarOutline, DollarCircleOutline, WarningOutline,
   LineChartOutline, SearchOutline, FilterOutline, MoreOutline, BarcodeOutline,
   WarningFill, DeleteOutline, ShoppingCartOutline, MoneyCollectOutline,
   WalletFill, CheckCircleOutline, PrinterOutline, MailOutline, CreditCardOutline,
-  QrcodeOutline, SyncOutline, CloseOutline, ShopFill
+  QrcodeOutline, SyncOutline, CloseOutline, ShopFill, RiseOutline,
+  InfoCircleOutline, SafetyCertificateOutline, CameraOutline, ClockCircleOutline,
+  PlusCircleOutline, DownloadOutline, EditOutline, FrownOutline, PhoneOutline,
+  LeftOutline, RightOutline, ControlOutline, StarOutline, ThunderboltOutline,
+  ShoppingOutline, CalendarOutline, FileTextOutline, SwapOutline,
+  EnvironmentOutline, NumberOutline, ProfileOutline
 ];
 
 registerLocaleData(es);

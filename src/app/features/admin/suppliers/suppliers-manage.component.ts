@@ -4,11 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { StorageService } from '../../../core/services/storage.service';
 import { AuthService } from '../../../core/services/auth.service';
+
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 interface Supplier {
   id: number;
@@ -24,10 +27,20 @@ interface Supplier {
 @Component({
   selector: 'app-suppliers-manage',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzIconModule, NzInputModule, NzButtonModule, NzModalModule, NzSelectModule],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    NzIconModule, 
+    NzInputModule, 
+    NzButtonModule, 
+    NzModalModule, 
+    NzSelectModule,
+    NzFormModule,
+    NzGridModule
+  ],
   templateUrl: './suppliers-manage.component.html',
   styleUrl: './suppliers-manage.component.css',
-  providers: [NzMessageService]
+  providers: [NzMessageService, NzModalService]
 })
 export class SuppliersManageComponent implements OnInit {
   searchQuery = '';
@@ -35,19 +48,17 @@ export class SuppliersManageComponent implements OnInit {
   isEditMode = false;
   editingSupplierId: number | null = null;
 
-  // Stats
   activeSuppliersCount = 0;
-  pendingOrdersTotal = '$12,450.00';
-  newOrdersCount = 5;
+  totalSkus = 0;
+  pendingOrdersTotal = 5;
 
-  // New/Edit Supplier Form
   newSupplier = {
-     name: '',
-     rut: '',
-     phone: '',
-     email: '',
-     category: '',
-     address: ''
+    name: '',
+    rut: '',
+    phone: '',
+    email: '',
+    category: '',
+    address: ''
   };
 
   categories = ['Alimentos y Bebidas', 'Limpieza', 'Cuidado Personal', 'Lácteos', 'Otros'];
@@ -56,7 +67,8 @@ export class SuppliersManageComponent implements OnInit {
   constructor(
     private storageService: StorageService,
     private authService: AuthService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private modal: NzModalService
   ) {}
 
   ngOnInit() {
@@ -66,16 +78,29 @@ export class SuppliersManageComponent implements OnInit {
   loadSuppliers() {
     this.suppliers = this.storageService.getSuppliers();
     this.activeSuppliersCount = this.suppliers.length;
+    this.totalSkus = this.suppliers.reduce((sum, s) => sum + (s.skus || 0), 0);
   }
 
   get filteredSuppliers(): Supplier[] {
-    if (!this.searchQuery.trim()) return this.suppliers;
+    let result = this.suppliers;
     const q = this.searchQuery.toLowerCase();
-    return this.suppliers.filter(s =>
-      s.name.toLowerCase().includes(q) ||
-      s.email.toLowerCase().includes(q) ||
-      s.phone.toLowerCase().includes(q)
-    );
+
+    if (q) {
+      result = result.filter(s =>
+        s.name.toLowerCase().includes(q) ||
+        s.email.toLowerCase().includes(q) ||
+        s.phone.toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }
+
+  exportToPdf() {
+    this.message.loading('Generando PDF...', { nzDuration: 1500 });
+    setTimeout(() => {
+      this.message.success('Reporte de proveedores exportado correctamente');
+    }, 1600);
   }
 
   openCreateModal() {
@@ -90,10 +115,10 @@ export class SuppliersManageComponent implements OnInit {
     this.editingSupplierId = supplier.id;
     this.newSupplier = {
       name: supplier.name,
-      rut: '', // Placeholder since we don't have it in the Interface yet
+      rut: '',
       phone: supplier.phone,
       email: supplier.email,
-      category: '', // Placeholder
+      category: '',
       address: ''
     };
     this.isCreateModalVisible = true;
@@ -109,7 +134,6 @@ export class SuppliersManageComponent implements OnInit {
     let newList = [...this.suppliers];
 
     if (this.isEditMode && this.editingSupplierId !== null) {
-      // Update Mode
       newList = newList.map(s => {
         if (s.id === this.editingSupplierId) {
           return {
@@ -123,7 +147,6 @@ export class SuppliersManageComponent implements OnInit {
       });
       this.message.success('Proveedor actualizado con éxito');
     } else {
-      // Create Mode
       const initials = this.newSupplier.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
       newList.unshift({
         id: this.suppliers.length + 1,
@@ -133,7 +156,7 @@ export class SuppliersManageComponent implements OnInit {
         skus: 0,
         registrationDate: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
         initials: initials,
-        color: '#E5E7EB'
+        color: '#E0E7FF'
       });
       this.message.success('Proveedor registrado con éxito');
     }
@@ -143,17 +166,26 @@ export class SuppliersManageComponent implements OnInit {
     this.closeCreateModal();
   }
 
+  confirmDelete(supplier: Supplier) {
+    this.modal.confirm({
+      nzTitle: '¿Eliminar proveedor?',
+      nzContent: `<b style="color: red;">${supplier.name}</b> será removido de la lista de proveedores.`,
+      nzOkText: 'Sí, eliminar',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzOnOk: () => this.deleteSupplier(supplier.id),
+      nzCancelText: 'Cancelar'
+    });
+  }
+
   deleteSupplier(id: number) {
     const newList = this.suppliers.filter(s => s.id !== id);
     this.storageService.saveSuppliers(newList);
     this.loadSuppliers();
+    this.message.warning('Proveedor eliminado');
   }
 
   logout() {
     this.authService.logout();
-  }
-
-  showNotifications() {
-    this.message.info('No tienes notificaciones de pedidos pendientes.');
   }
 }

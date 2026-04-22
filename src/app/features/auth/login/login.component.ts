@@ -32,6 +32,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class LoginComponent {
   loginForm: FormGroup;
   passwordVisible = false;
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder, 
@@ -50,16 +51,23 @@ export class LoginComponent {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
+      this.isLoading = true;
       
-      const success = this.authService.login(email, password);
-      
-      if (success) {
-        this.message.success('Welcome to La Media Luna!');
-      } else {
-        this.message.error('Invalid credentials. Please try again.');
+      try {
+        const success = await this.authService.login(email, password);
+        
+        if (success) {
+          this.message.success('¡Bienvenido a La Media Luna!');
+        } else {
+          this.message.error('Credenciales inválidas. Intente de nuevo.');
+        }
+      } catch {
+        this.message.error('Error de conexión. Intente de nuevo.');
+      } finally {
+        this.isLoading = false;
       }
     } else {
       Object.values(this.loginForm.controls).forEach(control => {

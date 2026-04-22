@@ -1,0 +1,192 @@
+<div class="suppliers-dashboard">
+  
+  <!-- HEADER SECTION -->
+  <div class="dashboard-header">
+    <div>
+      <h1 class="page-title">Gestión de Proveedores</h1>
+      <p class="page-subtitle">Análisis de rendimiento y métricas clave</p>
+    </div>
+    <button nz-button nzType="primary" (click)="exportPDF()">
+      <span nz-icon nzType="file-pdf" nzTheme="outline"></span>
+      Exportar PDF
+    </button>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon icon-blue">
+        <span nz-icon nzType="car" nzTheme="outline"></span>
+      </div>
+      <div>
+        <p class="kpi-label">TOTAL PROVEEDORES</p>
+        <h2 class="kpi-value">{{ totalSuppliers }}</h2>
+        <p class="kpi-subtitle">{{ activeSuppliersCount }} activos</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-green">
+        <span nz-icon nzType="inbox" nzTheme="outline"></span>
+      </div>
+      <div>
+        <p class="kpi-label">TOTAL SKUs</p>
+        <h2 class="kpi-value">{{ totalSkus }}</h2>
+        <p class="kpi-subtitle">Productos activos</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-yellow">
+        <span nz-icon nzType="star" nzTheme="fill"></span>
+      </div>
+      <div>
+        <p class="kpi-label">RATING PROMEDIO</p>
+        <h2 class="kpi-value">{{ avgRating }}</h2>
+        <p class="kpi-subtitle">de 5.0</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS SECTION -->
+  <div class="charts-grid">
+    <!-- Sales Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Ventas por Proveedor</h3>
+        <p class="chart-subtitle">Top 5 proveedores</p>
+      </div>
+      <div *ngIf="salesChartOptions" style="min-height: 320px;">
+        <apx-chart
+          [series]="salesChartOptions.series"
+          [chart]="salesChartOptions.chart"
+          [colors]="salesChartOptions.colors"
+          [xaxis]="salesChartOptions.xaxis"
+          [grid]="salesChartOptions.grid">
+        </apx-chart>
+      </div>
+    </div>
+
+    <!-- Delivery Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Frecuencia de Entregas</h3>
+        <p class="chart-subtitle">Últimas entregas</p>
+      </div>
+      <div *ngIf="deliveryChartOptions" style="min-height: 320px;">
+        <apx-chart
+          [series]="deliveryChartOptions.series"
+          [chart]="deliveryChartOptions.chart"
+          [colors]="deliveryChartOptions.colors"
+          [xaxis]="deliveryChartOptions.xaxis"
+          [stroke]="deliveryChartOptions.stroke"
+          [grid]="deliveryChartOptions.grid">
+        </apx-chart>
+      </div>
+    </div>
+
+    <!-- Rating Chart -->
+    <div class="chart-card chart-card-full">
+      <div class="chart-header">
+        <h3>Distribución de Ratings</h3>
+        <p class="chart-subtitle">Clasificación de proveedores</p>
+      </div>
+      <div *ngIf="ratingChartOptions" style="min-height: 280px; display: flex; align-items: center; justify-content: center;">
+        <apx-chart
+          [series]="ratingChartOptions.series"
+          [chart]="ratingChartOptions.chart"
+          [colors]="ratingChartOptions.colors"
+          [labels]="ratingChartOptions.labels"
+          [legend]="ratingChartOptions.legend">
+        </apx-chart>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTERS AND TABLE SECTION -->
+  <div class="table-section card">
+    <div class="section-header">
+      <h2>Proveedores</h2>
+      <div class="filter-group">
+        <nz-input-group [nzPrefix]="searchIcon" class="search-input">
+          <input type="text" nz-input placeholder="Buscar proveedor..." 
+                 [ngModel]="searchQuery" 
+                 (ngModelChange)="searchQuery = $event; onFilterChange()" />
+        </nz-input-group>
+        <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+
+        <nz-select 
+          [(ngModel)]="filterStatus" 
+          (ngModelChange)="applyStatusFilter($event)"
+          nzPlaceHolder="Estado"
+          nzAllowClear
+          style="width: 150px;">
+          <nz-option nzValue="Activo" nzLabel="✓ Activo"></nz-option>
+          <nz-option nzValue="Inactivo" nzLabel="✗ Inactivo"></nz-option>
+        </nz-select>
+
+        <nz-select 
+          [(ngModel)]="filterSkuRange" 
+          (ngModelChange)="applySkuFilter($event)"
+          nzPlaceHolder="Rango SKU"
+          nzAllowClear
+          style="width: 150px;">
+          <nz-option nzValue="0-50" nzLabel="0-50 SKUs"></nz-option>
+          <nz-option nzValue="51-100" nzLabel="51-100 SKUs"></nz-option>
+          <nz-option nzValue="100+" nzLabel="100+ SKUs"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <nz-table 
+      #suppliersTable 
+      [nzData]="filteredSuppliers" 
+      [nzFrontPagination]="true" 
+      [nzPageSize]="pageSize"
+      [(nzPageIndex)]="pageIndex"
+      [nzLoading]="isLoading"
+      [nzScroll]="{ x: '1200px' }"
+      class="suppliers-table">
+      <thead>
+        <tr>
+          <th nzWidth="25%">NOMBRE</th>
+          <th nzWidth="25%">EMAIL</th>
+          <th nzWidth="12%">SKUs</th>
+          <th nzWidth="12%">RATING</th>
+          <th nzWidth="13%">ESTADO</th>
+          <th nzWidth="13%">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let supplier of suppliersTable.data">
+          <td class="font-semibold">{{ supplier.name }}</td>
+          <td class="text-secondary">{{ supplier.email }}</td>
+          <td>
+            <span class="badge-sku">{{ supplier.skus }} SKUs</span>
+          </td>
+          <td>
+            <div class="rating-display">
+              <span nz-icon nzType="star" nzTheme="fill" style="color: #FFB800;"></span>
+              <span class="font-bold">{{ supplier.rating }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="supplier.status === 'Activo' ? 'active' : 'inactive'">
+              {{ supplier.status === 'Activo' ? '✓ Activo' : '✗ Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <button nz-button nzType="text" nzSize="small">Ver detalles</button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <div *ngIf="filteredSuppliers.length === 0 && !isLoading" class="text-center py-lg text-secondary">
+      <span nz-icon nzType="inbox" nzTheme="outline" class="text-2xl mb-md block"></span>
+      <p>No se encontraron proveedores</p>
+    </div>
+  </div>
+
+</div>

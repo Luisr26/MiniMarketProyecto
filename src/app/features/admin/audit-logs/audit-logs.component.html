@@ -1,0 +1,133 @@
+<div class="audit-container">
+  
+  <!-- HEADER -->
+  <div class="audit-header">
+    <div>
+      <h1 class="page-title">Auditoría de Sistema</h1>
+      <p class="page-subtitle">Registro de cambios, sincronización y verificación de integridad</p>
+    </div>
+  </div>
+
+  <!-- SYNC STATUS -->
+  <div class="sync-status-card">
+    <div class="status-content">
+      <div class="status-indicator" [ngClass]="syncStatus">
+        <span *ngIf="syncStatus === 'idle'" nz-icon nzType="check-circle" nzTheme="fill"></span>
+        <span *ngIf="syncStatus === 'syncing'" nz-icon nzType="loading" nzTheme="outline"></span>
+        <span *ngIf="syncStatus === 'completed'" nz-icon nzType="check-circle" nzTheme="fill"></span>
+      </div>
+      <div>
+        <p class="status-label">
+          <span *ngIf="syncStatus === 'idle'">Sistema sincronizado</span>
+          <span *ngIf="syncStatus === 'syncing'">Sincronizando datos...</span>
+          <span *ngIf="syncStatus === 'completed'">Sincronización completada</span>
+        </p>
+        <p class="status-detail">Última sincronización: {{ lastSync | date:'short' }}</p>
+      </div>
+    </div>
+    <button nz-button nzType="primary" (click)="runFullVerification()" [disabled]="syncStatus !== 'idle'">
+      <span nz-icon nzType="reload" nzTheme="outline"></span>
+      Verificar integridad
+    </button>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-buttons">
+    <button nz-button (click)="exportLogs()">
+      <span nz-icon nzType="download" nzTheme="outline"></span>
+      Exportar logs
+    </button>
+    <button nz-button nzDanger (click)="clearOldLogs()">
+      <span nz-icon nzType="delete" nzTheme="outline"></span>
+      Limpiar logs antiguos
+    </button>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-row">
+    <input type="text" 
+           [(ngModel)]="searchQuery" 
+           (ngModelChange)="onFilterChange()"
+           placeholder="Buscar en logs..."
+           class="search-input" />
+
+    <select [(ngModel)]="filterAction" (ngModelChange)="onFilterChange()" class="filter-select">
+      <option value="all">Todas las acciones</option>
+      <option value="CREATE">Crear</option>
+      <option value="UPDATE">Actualizar</option>
+      <option value="DELETE">Eliminar</option>
+      <option value="SYNC">Sincronizar</option>
+      <option value="VERIFY">Verificar</option>
+    </select>
+
+    <select [(ngModel)]="filterEntity" (ngModelChange)="onFilterChange()" class="filter-select">
+      <option value="all">Todas las entidades</option>
+      <option value="PRODUCT">Producto</option>
+      <option value="TRANSACTION">Transacción</option>
+      <option value="USER">Usuario</option>
+      <option value="SUPPLIER">Proveedor</option>
+      <option value="INVENTORY">Inventario</option>
+    </select>
+
+    <select [(ngModel)]="filterStatus" (ngModelChange)="onFilterChange()" class="filter-select">
+      <option value="all">Todos los estados</option>
+      <option value="SUCCESS">Exitoso</option>
+      <option value="WARNING">Advertencia</option>
+      <option value="FAILED">Fallido</option>
+    </select>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-section card">
+    <nz-table 
+      #auditTable 
+      [nzData]="filteredLogs" 
+      [nzFrontPagination]="true" 
+      [nzPageSize]="pageSize"
+      [(nzPageIndex)]="pageIndex"
+      [nzLoading]="isLoading"
+      [nzScroll]="{ x: '1400px' }"
+      class="audit-table">
+      <thead>
+        <tr>
+          <th nzWidth="15%">TIMESTAMP</th>
+          <th nzWidth="12%">ACCIÓN</th>
+          <th nzWidth="12%">ENTIDAD</th>
+          <th nzWidth="10%">ID</th>
+          <th nzWidth="35%">MENSAJE</th>
+          <th nzWidth="10%">ESTADO</th>
+          <th nzWidth="6%">CAMBIOS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of auditTable.data">
+          <td class="font-mono text-sm">{{ formatTime(log.timestamp) }}</td>
+          <td>
+            <span class="action-badge" [ngClass]="'action-' + log.action.toLowerCase()">
+              {{ log.action }}
+            </span>
+          </td>
+          <td>
+            <span class="entity-badge">{{ log.entity }}</span>
+          </td>
+          <td class="font-mono">{{ log.entityId }}</td>
+          <td class="text-secondary">{{ log.message }}</td>
+          <td>
+            <nz-badge [nzStatus]="getStatusColor(log.status)" [nzText]="log.status"></nz-badge>
+          </td>
+          <td>
+            <span class="changes-count" *ngIf="log.changes.length > 0">
+              {{ log.changes.length }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <div *ngIf="filteredLogs.length === 0 && !isLoading" class="empty-state">
+      <span nz-icon nzType="inbox" nzTheme="outline" class="text-2xl mb-md"></span>
+      <p>No hay registros de auditoría</p>
+    </div>
+  </div>
+
+</div>

@@ -1,10 +1,10 @@
 <div class="product-entry-container">
-  
+
   <div class="entry-layout">
-    
+
     <!-- ENTRY FORM -->
-    <div class="entry-form-panel box-panel">
-      <div class="panel-header mb-6">
+    <div class="entry-form-panel">
+      <div class="panel-header">
         <div>
           <h2 class="form-title">Registro de Entrada</h2>
           <p class="form-subtitle">RECEPCIÓN DE MERCANCÍA AL ALMACÉN</p>
@@ -15,7 +15,10 @@
       <div class="form-grid">
         <!-- Product Selection -->
         <div class="field-item full">
-          <label>PRODUCTO / SKU</label>
+          <label>
+            <span nz-icon nzType="barcode" nzTheme="outline" class="field-icon"></span>
+            PRODUCTO / SKU
+          </label>
           <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Seleccionar producto del catálogo" [(ngModel)]="formData.productId" class="custom-select">
             <nz-option *ngFor="let p of products" [nzLabel]="p.name + ' (' + p.sku + ')'" [nzValue]="p.id"></nz-option>
           </nz-select>
@@ -23,7 +26,10 @@
 
         <!-- Supplier -->
         <div class="field-item">
-          <label>PROVEEDOR</label>
+          <label>
+            <span nz-icon nzType="car" nzTheme="outline" class="field-icon"></span>
+            PROVEEDOR
+          </label>
           <nz-select nzPlaceHolder="Seleccionar proveedor" [(ngModel)]="formData.supplierId" class="custom-select">
             <nz-option *ngFor="let s of suppliers" [nzLabel]="s.name" [nzValue]="s.id"></nz-option>
           </nz-select>
@@ -31,27 +37,48 @@
 
         <!-- Quantity -->
         <div class="field-item">
-          <label>CANTIDAD RECIBIDA</label>
-          <nz-input-group [nzSuffix]="unitSuffix">
+          <label>
+            <span nz-icon nzType="number" nzTheme="outline" class="field-icon"></span>
+            CANTIDAD RECIBIDA
+          </label>
+          <nz-input-group [nzSuffix]="unitSuffix" class="custom-input-group">
             <input type="number" nz-input [(ngModel)]="formData.quantity" placeholder="0" class="custom-input" />
           </nz-input-group>
-          <ng-template #unitSuffix><span class="text-gray-400 font-bold">UDS</span></ng-template>
+          <ng-template #unitSuffix><span class="unit-suffix">UDS</span></ng-template>
+        </div>
+
+        <!-- Unit Cost -->
+        <div class="field-item">
+          <label>
+            <span nz-icon nzType="dollar-circle" nzTheme="outline" class="field-icon"></span>
+            COSTO UNITARIO
+          </label>
+          <nz-input-group [nzPrefix]="costPrefix" class="custom-input-group">
+            <input type="number" nz-input [(ngModel)]="formData.unitCost" placeholder="0.00" class="custom-input" />
+          </nz-input-group>
+          <ng-template #costPrefix><span class="unit-suffix">$</span></ng-template>
         </div>
 
         <!-- Date -->
         <div class="field-item">
-          <label>FECHA DE INGRESO</label>
+          <label>
+            <span nz-icon nzType="calendar" nzTheme="outline" class="field-icon"></span>
+            FECHA DE INGRESO
+          </label>
           <nz-date-picker [(ngModel)]="formData.entryDate" style="width: 100%;" class="custom-date-picker"></nz-date-picker>
         </div>
 
         <!-- Reference Notes -->
         <div class="field-item full">
-          <label>NOTAS DE RECEPCIÓN / OBSERVACIONES</label>
+          <label>
+            <span nz-icon nzType="file-text" nzTheme="outline" class="field-icon"></span>
+            NOTAS DE RECEPCIÓN / OBSERVACIONES
+          </label>
           <textarea nz-input [nzAutosize]="{ minRows: 3, maxRows: 5 }" [(ngModel)]="formData.notes" placeholder="Ej: Mercancía recibida según factura #3021. Sin daños visibles." class="custom-textarea"></textarea>
         </div>
       </div>
 
-      <div class="form-actions mt-6">
+      <div class="form-actions">
         <button class="btn-cancel" (click)="resetForm()">Borrar Campos</button>
         <button class="btn-submit" (click)="submitEntry()">
           <span nz-icon nzType="plus-circle" nzTheme="outline"></span> REGISTRAR ENTRADA
@@ -63,7 +90,7 @@
     <div class="entry-log-panel">
       <div class="log-header">
         <h3 class="log-title">Entradas Recientes</h3>
-        <span nz-icon nzType="history" nzTheme="outline"></span>
+        <span nz-icon nzType="history" nzTheme="outline" class="log-header-icon"></span>
       </div>
 
       <div class="log-list">

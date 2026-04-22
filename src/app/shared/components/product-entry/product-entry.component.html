@@ -1,58 +1,74 @@
 <div class="entry-page">
   
   <div class="entry-header">
-    <h1 class="entry-title">Entrada de Mercancía</h1>
-    <p class="entry-subtitle">REGISTRO DE STOCK Y ABASTECIMIENTO</p>
+    <div class="flex items-center gap-4">
+      <div class="header-badge">STOCK MANAGER</div>
+      <div>
+        <h1 class="entry-title">Registro de Abastecimiento</h1>
+        <p class="entry-subtitle">Gestione la entrada de nueva mercancía al inventario central.</p>
+      </div>
+    </div>
   </div>
 
   <div class="entry-grid">
     <!-- Main Form -->
     <div class="form-container">
-      <div class="card-glass">
-        <h3 class="card-title">Detalles del Ingreso</h3>
+      <div class="card-premium">
+        <div class="card-header-accent">
+          <span nz-icon nzType="form" nzTheme="outline"></span>
+          Detalles de la Operación
+        </div>
         
-        <div class="form-field">
-          <label>PRODUCTO A ABASTECER</label>
-          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Selecciona un producto..." [(ngModel)]="selectedProductId" class="full-width">
-            <nz-option *ngFor="let p of products" [nzLabel]="p.name + ' (' + p.sku + ')'" [nzValue]="p.id"></nz-option>
-          </nz-select>
-        </div>
-
-        <div class="form-row">
-          <div class="form-field">
-            <label>CANTIDAD A INGRESAR</label>
-            <input type="number" nz-input [(ngModel)]="entryQuantity" placeholder="0" class="qty-input" />
+        <div class="card-body-p">
+          <div class="form-field-lg">
+            <label class="label-p">PRODUCTO A ABASTECER</label>
+            <nz-select 
+              nzShowSearch 
+              nzAllowClear 
+              nzPlaceHolder="Seleccione un producto del catálogo..." 
+              [(ngModel)]="selectedProductId" 
+              class="select-p">
+              <nz-option *ngFor="let p of products" [nzLabel]="p.name + ' - ' + p.sku" [nzValue]="p.id"></nz-option>
+            </nz-select>
           </div>
-          <div class="form-field">
-            <label>REFEENCIA / NOTA (OPCIONAL)</label>
-            <input type="text" nz-input [(ngModel)]="entryNote" placeholder="Ej: Factura #992" />
+
+          <div class="form-row-p">
+            <div class="form-field-p">
+              <label class="label-p">CANTIDAD (UNIDADES)</label>
+              <nz-input-group [nzPrefix]="prefixQty">
+                <input type="number" nz-input [(ngModel)]="entryQuantity" placeholder="0" class="input-p" />
+              </nz-input-group>
+              <ng-template #prefixQty><span nz-icon nzType="number"></span></ng-template>
+            </div>
+            <div class="form-field-p">
+              <label class="label-p">REFERENCIA / FACTURA</label>
+              <nz-input-group [nzPrefix]="prefixRef">
+                <input type="text" nz-input [(ngModel)]="entryNote" placeholder="Ej: FAC-2024-001" class="input-p" />
+              </nz-input-group>
+              <ng-template #prefixRef><span nz-icon nzType="file-text"></span></ng-template>
+            </div>
+          </div>
+
+          <div class="action-wrap">
+            <button class="btn-register-p" [disabled]="!selectedProductId || !entryQuantity" (click)="registerEntry()">
+              <span nz-icon nzType="plus-circle" nzTheme="outline"></span>
+              PROCESAR INGRESO DE STOCK
+            </button>
           </div>
         </div>
-
-        <button class="btn-register" (click)="registerEntry()">
-          <span nz-icon nzType="plus-circle" nzTheme="outline"></span> Registrar Entrada
-        </button>
       </div>
     </div>
 
     <!-- Recent History -->
     <div class="history-side">
-      <div class="card-glass h-full">
-        <h3 class="card-title">Ingresos Recientes</h3>
-        <div class="activity-list">
-          <div class="activity-item" *ngFor="let entry of recentEntries">
-            <div class="act-icon">
-              <span nz-icon nzType="check-circle" nzTheme="fill"></span>
-            </div>
-            <div class="act-content">
-              <span class="act-product">{{ entry.product }}</span>
-              <span class="act-details">+{{ entry.qty }} unid. &bull; {{ entry.date }}</span>
-              <span class="act-user">Por: {{ entry.user }}</span>
-            </div>
-          </div>
+      <div class="card-premium h-full overflow-hidden">
+        <div class="card-header-accent bg-gray-50 border-b border-gray-100">
+          <span nz-icon nzType="history" nzTheme="outline"></span>
+          Registro de Actividad
         </div>
-      </div>
-    </div>
-  </div>
-
+        
+        <div class="activity-scroll">
+          <div class="activity-card" *ngFor="let entry of recentEntries">
+            <div class="act-indicator"></div>
+            <div class="act-content">
 </div>

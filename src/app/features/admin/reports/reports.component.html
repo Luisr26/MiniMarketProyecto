@@ -1,87 +1,161 @@
-<div class="reports-container">
-  
-  <!-- SUMMARY STATS -->
-  <div class="reports-stats-grid">
-    <div class="report-card">
-      <div class="card-icon-wrap bg-blue">
-        <span nz-icon nzType="dollar" nzTheme="outline"></span>
+<div class="reports-wrapper">
+
+  <!-- HEADER -->
+  <div class="reports-header">
+    <div>
+      <h1 class="reports-title">Reportes y Analítica</h1>
+      <p class="reports-subtitle">RESUMEN GENERAL DE RENDIMIENTO • ÚLTIMOS 7 DÍAS</p>
+    </div>
+    <button class="btn-export">
+      <span nz-icon nzType="download" nzTheme="outline"></span> Exportar PDF
+    </button>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon kpi-blue">
+        <span nz-icon nzType="dollar-circle" nzTheme="outline"></span>
       </div>
-      <div class="card-info">
-        <span class="card-label">TOTAL RECAUDADO</span>
-        <h2 class="card-value">${{ stats.totalRevenue | number:'1.2-2' }}</h2>
-        <span class="card-trend text-green">+{{ stats.growth }}% vs mes anterior</span>
+      <div class="kpi-content">
+        <span class="kpi-label">RECAUDACIÓN TOTAL</span>
+        <h2 class="kpi-value">${{ stats.totalRevenue | number:'1.2-2' }}</h2>
+        <span class="kpi-trend trend-up">
+          <span nz-icon nzType="rise" nzTheme="outline"></span> +{{ stats.growth }}%
+        </span>
       </div>
     </div>
 
-    <div class="report-card">
-      <div class="card-icon-wrap bg-green">
-        <span nz-icon nzType="shopping-cart" nzTheme="outline"></span>
+    <div class="kpi-card">
+      <div class="kpi-icon kpi-green">
+        <span nz-icon nzType="shopping" nzTheme="outline"></span>
       </div>
-      <div class="card-info">
-        <span class="card-label">TICKET PROMEDIO</span>
-        <h2 class="card-value">${{ stats.avgTicket | number:'1.2-2' }}</h2>
-        <span class="card-trend text-green">Rendimiento óptimo</span>
+      <div class="kpi-content">
+        <span class="kpi-label">TRANSACCIONES</span>
+        <h2 class="kpi-value">{{ stats.transactionCount | number }}</h2>
+        <span class="kpi-trend trend-up">
+          <span nz-icon nzType="rise" nzTheme="outline"></span> +8.2%
+        </span>
       </div>
     </div>
 
-    <div class="report-card">
-      <div class="card-icon-wrap bg-orange">
-        <span nz-icon nzType="file-text" nzTheme="outline"></span>
+    <div class="kpi-card">
+      <div class="kpi-icon kpi-purple">
+        <span nz-icon nzType="thunderbolt" nzTheme="outline"></span>
       </div>
-      <div class="card-info">
-        <span class="card-label">TOTAL TRANSACCIONES</span>
-        <h2 class="card-value">{{ stats.transactionCount }}</h2>
-        <span class="card-trend">Ventas procesadas hoy</span>
+      <div class="kpi-content">
+        <span class="kpi-label">TICKET PROMEDIO</span>
+        <h2 class="kpi-value">${{ stats.avgTicket | number:'1.2-2' }}</h2>
+        <span class="kpi-trend trend-down">-2.1%</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon kpi-red">
+        <span nz-icon nzType="warning" nzTheme="outline"></span>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-label">STOCK CRÍTICO</span>
+        <h2 class="kpi-value">{{ criticalStockCount }}</h2>
+        <span class="kpi-trend">Productos bajo mínimo</span>
       </div>
     </div>
   </div>
 
-  <!-- CHARTS AREA -->
-  <div class="charts-layout">
-    
-    <!-- MAIN CHART -->
-    <div class="chart-panel main-chart-panel">
+  <!-- CHARTS ROW 1 -->
+  <div class="charts-row">
+    <div class="chart-panel chart-wide">
       <div class="panel-header">
-        <h3 class="panel-title">Rendimiento Semanal de Ventas</h3>
-        <button class="btn-period">Últimos 7 días <span nz-icon nzType="down"></span></button>
+        <h3 class="panel-title">Tendencia de Ingresos</h3>
+        <span class="panel-badge">Semanal</span>
       </div>
-
-      <div class="weekly-bars-container">
-        <div class="bar-item" *ngFor="let day of weeklySales">
-          <div class="bar-inner-wrap">
-            <div class="bar-tooltip">${{ day.amount }}</div>
-            <div class="bar-fill" [style.height.%]="day.height"></div>
-          </div>
-          <span class="bar-day">{{ day.day.substring(0,3).toUpperCase() }}</span>
-        </div>
-      </div>
+      <apx-chart
+        [series]="revenueChart.series"
+        [chart]="revenueChart.chart"
+        [colors]="revenueChart.colors"
+        [fill]="revenueChart.fill"
+        [dataLabels]="revenueChart.dataLabels"
+        [stroke]="revenueChart.stroke"
+        [xaxis]="revenueChart.xaxis"
+        [yaxis]="revenueChart.yaxis"
+        [legend]="revenueChart.legend"
+        [grid]="revenueChart.grid"
+        [tooltip]="revenueChart.tooltip">
+      </apx-chart>
     </div>
 
-    <!-- SIDE PANEL -->
-    <div class="side-panel">
-      <!-- CATEGORIES PIE CHART CONCEPT -->
-      <div class="chart-panel category-panel">
-        <h3 class="panel-title mb-4">Ventas por Categoría</h3>
-        
-        <div class="category-list">
-          <div class="cat-item" *ngFor="let cat of categories">
-            <div class="cat-info">
-              <span class="cat-dot" [style.background-color]="cat.color"></span>
-              <span class="cat-name">{{ cat.name }}</span>
-            </div>
-            <div class="cat-progress">
-              <div class="progress-track">
-                <div class="progress-fill" [style.width.%]="cat.percent" [style.background-color]="cat.color"></div>
-              </div>
-              <span class="cat-percent">{{ cat.percent }}%</span>
-            </div>
-          </div>
-        </div>
-
-        <button class="btn-full-report mt-4">DESCARGAR REPORTE DETALLADO</button>
+    <div class="chart-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Distribución por Categoría</h3>
       </div>
+      <apx-chart
+        [series]="categoryDonutChart.series"
+        [chart]="categoryDonutChart.chart"
+        [labels]="categoryDonutChart.labels"
+        [colors]="categoryDonutChart.colors"
+        [legend]="categoryDonutChart.legend"
+        [plotOptions]="categoryDonutChart.plotOptions"
+        [dataLabels]="categoryDonutChart.dataLabels"
+        [stroke]="categoryDonutChart.stroke">
+      </apx-chart>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 2 -->
+  <div class="charts-row">
+    <div class="chart-panel chart-wide">
+      <div class="panel-header">
+        <h3 class="panel-title">Ventas vs Compras</h3>
+        <span class="panel-badge">Comparativo</span>
+      </div>
+      <apx-chart
+        [series]="salesVsPurchasesChart.series"
+        [chart]="salesVsPurchasesChart.chart"
+        [colors]="salesVsPurchasesChart.colors"
+        [plotOptions]="salesVsPurchasesChart.plotOptions"
+        [dataLabels]="salesVsPurchasesChart.dataLabels"
+        [xaxis]="salesVsPurchasesChart.xaxis"
+        [yaxis]="salesVsPurchasesChart.yaxis"
+        [legend]="salesVsPurchasesChart.legend"
+        [grid]="salesVsPurchasesChart.grid">
+      </apx-chart>
     </div>
 
+    <div class="chart-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Estado de Stock</h3>
+        <span class="panel-badge badge-warning">{{ criticalStockCount }} críticos</span>
+      </div>
+      <apx-chart
+        [series]="stockStatusChart.series"
+        [chart]="stockStatusChart.chart"
+        [plotOptions]="stockStatusChart.plotOptions"
+        [labels]="stockStatusChart.labels"
+        [colors]="stockStatusChart.colors"
+        [legend]="stockStatusChart.legend">
+      </apx-chart>
+    </div>
+  </div>
+
+  <!-- CHART ROW 3 -->
+  <div class="charts-row">
+    <div class="chart-panel chart-full">
+      <div class="panel-header">
+        <h3 class="panel-title">Transacciones por Día</h3>
+        <span class="panel-badge">Volumen</span>
+      </div>
+      <apx-chart
+        [series]="weeklyBarChart.series"
+        [chart]="weeklyBarChart.chart"
+        [plotOptions]="weeklyBarChart.plotOptions"
+        [colors]="weeklyBarChart.colors"
+        [dataLabels]="weeklyBarChart.dataLabels"
+        [xaxis]="weeklyBarChart.xaxis"
+        [yaxis]="weeklyBarChart.yaxis"
+        [grid]="weeklyBarChart.grid"
+        [legend]="weeklyBarChart.legend">
+      </apx-chart>
+    </div>
   </div>
 
 </div>

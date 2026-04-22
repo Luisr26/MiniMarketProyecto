@@ -1,48 +1,377 @@
+/* ==================== IMPORTS GLOBALES ==================== */
 @import "tailwindcss";
+@import "app/styles/variables.css";
+@import "app/styles/typography.css";
+@import "app/styles/components.css";
+@import "app/styles/utilities.css";
 
-/* Define globally available CSS Variables */
+@theme {
+  --color-primary-dark: #10165F;
+  --color-primary-mid: #4F46E5;
+  --color-primary-light: #E6E9FA;
+  --color-bg-main: #F8F9FD;
+  --color-status-paid: #28C76F;
+  --color-status-pending: #FF9F43;
+  --color-status-error: #EA5455;
+  
+  --radius-2xl: 24px;
+  --radius-xl: 18px;
+  --radius-lg: 12px;
+  
+  --shadow-premium: 0 10px 40px -10px rgba(16, 22, 95, 0.1);
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
 @layer base {
   :root {
-    --color-primary-dark: #10165F;
-    --color-primary-light: #E6E9FA;
-    --color-bg-main: #F8F9FD;
-    --color-status-paid: #28C76F;
-    --color-status-pending: #FF9F43;
-    --color-status-error: #EA5455;
-    
-    /* Compactness Tokens */
     --font-size-base: 14px;
-    --spacing-panel: 1rem;
-    --spacing-card: 0.75rem;
+    --spacing-panel: 1.5rem;
   }
-}
 
-/* Let Tailwind pick them up */
-@theme {
-  --color-primary-dark: var(--color-primary-dark);
-  --color-primary-light: var(--color-primary-light);
-  --color-bg-main: var(--color-bg-main);
-  --color-status-paid: var(--color-status-paid);
-  --color-status-pending: var(--color-status-pending);
-  --color-status-error: var(--color-status-error);
-  --radius-xl: 10px;
-  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.04);
-}
-
-/* ===== Base layer ===== */
-@layer base {
-  html {
-    font-size: var(--font-size-base);
-  }
   body {
-    background-color: var(--color-bg-main);
+    background-color: var(--color-bg-overlay);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-base);
+    margin: 0;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: #1f2937;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    margin: 0;
-    line-height: 1.5;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+  }
+}
+
+/* ==================== OVERRIDES NG-ZORRO ==================== */
+
+/* ==================== UNIFIED PREMIUM MODAL SYSTEM ==================== */
+
+/* Glassmorphism Mask */
+.ant-modal-mask {
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+/* Modal Container */
+.ant-modal-content {
+  border-radius: 24px !important;
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  overflow: hidden !important;
+  max-height: 85vh !important;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff !important;
+}
+
+/* Modal Header Overrides */
+.ant-modal-header {
+  background: #ffffff !important;
+  padding: 1.75rem 2.5rem !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.modal-header-p {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.m-icon {
+  width: 52px;
+  height: 52px;
+  background: #f1f5f9;
+  color: #10165f;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+}
+
+.m-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.m-subtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
+
+/* Modal Body Overrides */
+.ant-modal-body {
+  padding: 2rem 2.5rem !important;
+  overflow: hidden !important;
+  flex: 1;
+}
+
+/* Modal Footer Overrides */
+.ant-modal-footer {
+  padding: 1.5rem 2.5rem !important;
+  background: #f8fafc !important;
+  border-top: 1px solid #f1f5f9 !important;
+}
+
+/* COMPACT PREMIUM FORM SYSTEM */
+.compact-form .ant-form-item {
+  margin-bottom: 1rem !important;
+}
+
+.compact-form .ant-form-item-label > label {
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+  height: auto !important;
+  margin-bottom: 4px !important;
+}
+
+.compact-form .ant-input,
+.compact-form .ant-input-number,
+.compact-form .ant-input-affix-wrapper,
+.compact-form .ant-select-selector {
+  border-radius: 14px !important;
+  height: 46px !important;
+  background: #f8fafc !important;
+  font-size: 0.95rem !important;
+}
+
+.compact-form .ant-input:focus,
+.compact-form .ant-input-affix-wrapper-focused,
+.compact-form .ant-select-focused .ant-select-selector {
+  background: #ffffff !important;
+  border-color: #4f46e5 !important;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1) !important;
+}
+
+/* GLOBAL BUTTONS UPGRADE */
+.ant-btn {
+  height: 44px !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  padding: 0 1.75rem !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.ant-btn-primary {
+  background: #10165f !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(16, 22, 95, 0.25) !important;
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(16, 22, 95, 0.3) !important;
+  background: #0a0e3d !important;
+}
+
+.ant-btn-default:hover {
+  border-color: #10165f !important;
+  color: #10165f !important;
+}
+
+/* Danger Button */
+.ant-btn-dangerous {
+  background: #FEE2E2 !important;
+  border-color: #EF4444 !important;
+  color: #EF4444 !important;
+}
+
+.ant-btn-dangerous:hover {
+  background: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: white !important;
+}
+
+/* Link Button */
+.ant-btn-link {
+  color: #4F46E5 !important;
+  padding: 0 12px !important;
+}
+
+.ant-btn-link:hover {
+  color: #10165F !important;
+}
+
+/* ========== PREMIUM INPUTS & FORM CONTROLS ========== */
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector,
+.ant-picker {
+  border-radius: 14px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+  height: 46px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  color: #1e293b !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.ant-input-affix-wrapper {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border: 1.5px solid #e2e8f0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Aggressive removal of internal borders for ALL nested elements */
+.ant-input-affix-wrapper .ant-input,
+.ant-input-affix-wrapper input,
+.ant-input-affix-wrapper textarea,
+.ant-input-affix-wrapper .ant-input-number-input {
+  height: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  border-width: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding-left: 8px !important;
+}
+
+.ant-input-prefix {
+  color: #94a3b8 !important;
+  font-size: 1.1rem !important;
+  margin-right: 8px !important;
+}
+
+/* Hover State */
+.ant-input:hover,
+.ant-input-affix-wrapper:hover,
+.ant-select-selector:hover {
+  border-color: #cbd5e1 !important;
+  background: #f1f5f9 !important;
+}
+
+/* Focus State (Match User Image) */
+.ant-input:focus,
+.ant-input-affix-wrapper-focused,
+.ant-select-focused .ant-select-selector {
+  background: #ffffff !important;
+  border-color: #4f46e5 !important;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1), 0 4px 12px rgba(79, 70, 229, 0.05) !important;
+  outline: none !important;
+}
+
+/* Input Placeholder */
+.ant-input::placeholder {
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
+}
+
+/* ========== SELECT DROPDOWN ========== */
+.ant-select-dropdown {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(16, 22, 95, 0.15) !important;
+}
+
+.ant-select-item-option-selected {
+  background: #E6E9FA !important;
+  color: #10165F !important;
+}
+
+.ant-select-item-option-active {
+  background: #F8F9FD !important;
+}
+
+/* ========== TABLE ========== */
+.ant-table {
+  border-radius: 16px !important;
+}
+
+.ant-table-thead > tr > th {
+  background: #F8F9FD !important;
+  border-radius: 12px 12px 0 0 !important;
+  color: #6B7280 !important;
+  font-weight: 700 !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.5px !important;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 16px !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #F8F9FD !important;
+}
+
+/* ========== CARDS ========== */
+.ant-card {
+  border-radius: 20px !important;
+  border: 1px solid #F3F4F6 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ========== DRAWER ========== */
+.ant-drawer-content {
+  border-radius: 24px 0 0 24px !important;
+}
+
+.ant-drawer-header {
+  border-radius: 24px 0 0 0 !important;
+}
+
+/* ========== BADGES & TAGS ========== */
+.ant-badge-status-success {
+  background: #10B981 !important;
+}
+
+.ant-badge-status-warning {
+  background: #F59E0B !important;
+}
+
+.ant-badge-status-error {
+  background: #EF4444 !important;
+}
+
+/* ========== PAGINATION ========== */
+.ant-pagination-item {
+  border-radius: 10px !important;
+}
+
+.ant-pagination-item-active {
+  background: #4F46E5 !important;
+  border-color: #4F46E5 !important;
+}
+
+.ant-pagination-item-active a {
+  color: white !important;
+}
+
+/* Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-xl);
+}
+
+.box-panel {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-soft);
+}
+
+.icon-gradient {
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-mid));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 

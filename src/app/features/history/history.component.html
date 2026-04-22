@@ -1,108 +1,136 @@
 <div class="history-wrapper">
 
-  <!-- TOOLBAR -->
-  <div class="history-toolbar">
-    <div class="toolbar-left">
-      <nz-input-group [nzPrefix]="searchIcon" class="h-search-bar">
-        <input type="text" nz-input placeholder="Buscar factura o cliente..." [(ngModel)]="searchQuery" />
-      </nz-input-group>
-      <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
-      
-      <button class="btn-filter">
-        <span nz-icon nzType="control" nzTheme="outline"></span> Filtrar
+  <!-- HEADER -->
+  <div class="history-header">
+    <div>
+      <h1 class="history-title">Historial de Ventas</h1>
+      <p class="history-subtitle">REGISTRO DE TRANSACCIONES Y MOVIMIENTOS DE CAJA</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-report" (click)="generateDailyReport()">
+        <span nz-icon nzType="file-text" nzTheme="outline"></span> Reporte Diario
       </button>
     </div>
-    <div class="toolbar-right">
-      <span nz-icon nzType="download" nzTheme="outline" class="tool-icon"></span>
-      <span nz-icon nzType="printer" nzTheme="outline" class="tool-icon"></span>
+  </div>
+
+  <!-- STATS SUMMARY -->
+  <div class="history-stats-grid">
+    <div class="stat-card">
+      <div class="s-icon s-blue">
+        <span nz-icon nzType="swap" nzTheme="outline"></span>
+      </div>
+      <div class="s-info">
+        <span class="s-label">TRANSACCIONES</span>
+        <span class="s-value">{{ transactionCount }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="s-icon s-green">
+        <span nz-icon nzType="dollar" nzTheme="outline"></span>
+      </div>
+      <div class="s-info">
+        <span class="s-label">TOTAL RECAUDADO</span>
+        <span class="s-value">${{ totalToday | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="s-icon s-orange">
+        <span nz-icon nzType="wallet" nzTheme="outline"></span>
+      </div>
+      <div class="s-info">
+        <span class="s-label">EFECTIVO EN CAJA</span>
+        <span class="s-value">${{ turno.efectivoEnCaja | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="s-icon s-purple">
+        <span nz-icon nzType="user" nzTheme="outline"></span>
+      </div>
+      <div class="s-info">
+        <span class="s-label">CAJERO EN TURNO</span>
+        <span class="s-value-small">{{ turno.cajero }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH & FILTERS -->
+  <div class="history-toolbar">
+    <div class="search-box">
+      <nz-input-group [nzPrefix]="searchIcon" class="hist-search">
+        <input type="text" nz-input placeholder="Buscar por Folio o ID..." [(ngModel)]="searchQuery" />
+      </nz-input-group>
+      <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-chip" [class.active]="methodFilter === 'ALL'" (click)="methodFilter = 'ALL'">
+        Todas
+      </div>
+      <div class="filter-chip" [class.active]="methodFilter === 'EFECTIVO'" (click)="methodFilter = 'EFECTIVO'">
+        Efectivo
+      </div>
+      <div class="filter-chip" [class.active]="methodFilter === 'TARJETA'" (click)="methodFilter = 'TARJETA'">
+        Tarjeta
+      </div>
+      <div class="filter-chip" [class.active]="methodFilter === 'TRANSFER'" (click)="methodFilter = 'TRANSFER'">
+        Transferencia
+      </div>
     </div>
   </div>
 
   <!-- TABLE -->
-  <div class="table-container">
+  <div class="history-table-container">
     <table class="history-table">
       <thead>
         <tr>
-          <th>FACTURA #</th>
+          <th>FOLIO / FECHA</th>
           <th>HORA</th>
-          <th>ARTÍCULOS</th>
+          <th>ITEMS</th>
           <th>MÉTODO</th>
           <th>TOTAL</th>
-          <th>ACCIÓN</th>
+          <th>ESTADO</th>
+          <th class="th-center">ACCIONES</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let t of filteredTransactions">
-          <td class="cell-id">{{ t.id }}</td>
+        <tr *ngFor="let t of filteredTransactions" class="row-hover">
+          <td>
+            <div class="folio-id">{{ t.id }}</div>
+            <div class="folio-date">22 Abr, 2024</div>
+          </td>
           <td class="cell-time">{{ t.time }}</td>
-          <td class="cell-items">{{ t.items }} items</td>
-          <td class="cell-method">
-            <span class="method-badge" [ngClass]="t.method.toLowerCase()">{{ t.method }}</span>
+          <td class="cell-items">{{ t.items }} productos</td>
+          <td>
+            <span class="method-badge" [ngClass]="'method-' + t.method.toLowerCase()">
+              {{ t.method }}
+            </span>
           </td>
           <td class="cell-total">${{ t.total | number:'1.2-2' }}</td>
-          <td class="cell-action">
-            <span nz-icon nzType="eye" nzTheme="outline" class="view-icon"></span>
+          <td>
+            <span class="status-pill status-success">
+              <span class="dot"></span> {{ t.status }}
+            </span>
+          </td>
+          <td class="cell-actions">
+            <div class="actions-row">
+              <button class="act-btn" title="Ver Detalle" (click)="viewDetail(t)">
+                <span nz-icon nzType="eye" nzTheme="outline"></span>
+              </button>
+              <button class="act-btn" title="Reimprimir" (click)="reprintTicket(t)">
+                <span nz-icon nzType="printer" nzTheme="outline"></span>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
-  </div>
 
-  <!-- PAGINATION -->
-  <div class="h-pagination">
-    <span class="pag-count">Mostrando {{ filteredTransactions.length }} de 42 transacciones</span>
-    <div class="pag-controls">
-      <button class="btn-pag-nav"><span nz-icon nzType="left" nzTheme="outline"></span></button>
-      <button class="btn-pag-num active">1</button>
-      <button class="btn-pag-num">2</button>
-      <button class="btn-pag-num">3</button>
-      <button class="btn-pag-nav"><span nz-icon nzType="right" nzTheme="outline"></span></button>
-    </div>
-  </div>
-
-  <!-- BOTTOM CARDS -->
-  <div class="bottom-row">
-    <!-- Turn Summary -->
-    <div class="turn-summary-card">
-      <div class="ts-header">
-        <span nz-icon nzType="info-circle" nzTheme="outline"></span>
-        <h3 class="ts-title">Resumen de Turno</h3>
-      </div>
-      <div class="ts-grid">
-        <div class="ts-item">
-          <span class="ts-label">CAJERO</span>
-          <span class="ts-value">{{ turno.cajero }}</span>
-        </div>
-        <div class="ts-item">
-          <span class="ts-label">INICIO DE TURNO</span>
-          <span class="ts-value">{{ turno.inicio }}</span>
-        </div>
-        <div class="ts-item">
-          <span class="ts-label">VENTAS TOTALES</span>
-          <span class="ts-value">{{ turno.ventasTotales }}</span>
-        </div>
-        <div class="ts-item">
-          <span class="ts-label">EFECTIVO EN CAJA</span>
-          <span class="ts-value text-green">${{ turno.efectivoEnCaja | number:'1.2-2' }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Activity -->
-    <div class="recent-activity-card">
-      <h3 class="side-title">ACTIVIDAD RECIENTE</h3>
-      <div class="activity-list">
-        <div class="activity-item" *ngFor="let act of recentActivity">
-          <div class="act-dot" [style.background-color]="act.color"></div>
-          <div class="act-details">
-            <div class="act-head">
-              <span class="act-title">{{ act.title }}</span>
-            </div>
-            <span class="act-time">{{ act.time }} - {{ act.detail }}</span>
-          </div>
-        </div>
-      </div>
-      <button class="btn-full-log">VER REGISTRO COMPLETO</button>
+    <div *ngIf="filteredTransactions.length === 0" class="empty-state">
+      <span nz-icon nzType="inbox" nzTheme="outline"></span>
+      <p>No se encontraron transacciones para los filtros aplicados</p>
     </div>
   </div>
 

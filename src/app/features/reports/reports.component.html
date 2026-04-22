@@ -97,4 +97,42 @@
     </div>
   </div>
 
+  <!-- COMPARATIVE CHARTS -->
+  <div class="charts-row">
+    <!-- Sales vs Purchases -->
+    <div class="chart-panel full-width">
+      <div class="panel-header">
+        <h3 class="panel-title">Ventas vs Compras</h3>
+      </div>
+      <apx-chart
+        [series]="salesVsPurchasesChart.series"
+        [chart]="salesVsPurchasesChart.chart"
+        [colors]="salesVsPurchasesChart.colors"
+        [dataLabels]="salesVsPurchasesChart.dataLabels"
+        [stroke]="salesVsPurchasesChart.stroke"
+        [xaxis]="salesVsPurchasesChart.xaxis"
+        [legend]="salesVsPurchasesChart.legend"
+        [grid]="salesVsPurchasesChart.grid">
+      </apx-chart>
+    </div>
+  </div>
+
+  <!-- STOCK STATUS -->
+  <div class="charts-row">
+    <div class="chart-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Estado de Stock</h3>
+        <span class="badge-critical">{{ criticalStockCount }} productos críticos</span>
+      </div>
+      <apx-chart
+        [series]="stockCriticalChart.series"
+        [chart]="stockCriticalChart.chart"
+        [labels]="stockCriticalChart.labels"
+        [colors]="stockCriticalChart.colors"
+        [legend]="stockCriticalChart.legend"
+        [plotOptions]="stockCriticalChart.plotOptions">
+      </apx-chart>
+    </div>
+  </div>
+
 </div>

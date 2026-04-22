@@ -2,10 +2,21 @@
 
   <!-- CONTENT -->
   <div class="dashboard-content">
-    
-    <!-- TOP CARDS -->
+
+    <!-- QA TESTING PANEL -->
+    <div class="qa-panel box-panel mb-8" *ngIf="isQA">
+      <div class="flex items-center gap-4">
+        <div class="qa-icon-wrap bg-red-100 text-red-600 w-12 h-12 rounded-xl flex items-center justify-center">
+          <span nz-icon nzType="experiment" nzTheme="outline" class="text-xl"></span>
+        </div>
+        <div>
+          <h3 class="panel-title text-red-600">QA TESTING MODE ACTIVE</h3>
+          <p class="panel-desc">Como usuario QA, tienes acceso a todas las funcionalidades. Usa el selector en la parte superior para simular diferentes roles y el botón <b>"Seed DB"</b> para poblar la base de datos.</p>
+        </div>
+      </div>
+    </div>
     <div class="cards-grid">
-      <!-- Card 1 -->
+      <!-- Card 1: Active Stock -->
       <div class="stat-card">
         <div class="card-top">
           <div class="icon-box icon-blue">
@@ -22,17 +33,17 @@
         </div>
       </div>
 
-      <!-- Card 2 -->
+      <!-- Card 2: Revenue Today -->
       <div class="stat-card">
         <div class="card-top">
           <div class="icon-box icon-green">
-            <span nz-icon nzType="dollar" nzTheme="outline"></span>
+            <span nz-icon nzType="dollar-circle" nzTheme="outline"></span>
           </div>
           <span class="card-label">REVENUE TODAY</span>
         </div>
         <div class="card-body">
           <h2 class="card-value text-green">${{ revenueToday | number:'1.2-2' }}</h2>
-          <p class="card-desc">Based on history entries</p>
+          <p class="card-desc">{{ totalSalesCount }} transactions</p>
         </div>
         <div class="card-footer">
           <div class="progress-bar-container">
@@ -42,7 +53,7 @@
         </div>
       </div>
 
-      <!-- Card 3 -->
+      <!-- Card 3: Low Stock Alert -->
       <div class="stat-card card-alert">
         <div class="card-top">
           <div class="icon-box icon-red">
@@ -51,8 +62,8 @@
           <span class="card-label">CRITICAL ALERTS</span>
         </div>
         <div class="card-body">
-          <h2 class="card-value text-red">{{ criticalAlerts | number:'2.0-0' }}</h2>
-          <p class="card-desc text-red">Items below threshold</p>
+          <h2 class="card-value text-red">{{ lowStockCount | number }}</h2>
+          <p class="card-desc text-red">{{ criticalAlerts }} items out of stock</p>
         </div>
         <div class="card-footer text-red text-bold">
           <a routerLink="/admin/inventory" class="alert-link">Ver lista &rarr;</a>
@@ -60,141 +71,187 @@
       </div>
     </div>
 
-    <!-- MIDDLE SECTION -->
+    <!-- MIDDLE SECTION: CHARTS -->
     <div class="middle-grid">
-      <!-- Chart Area -->
+      <!-- Chart 1: Weekly Sales Performance -->
       <div class="chart-container box-panel">
         <div class="panel-header">
           <div>
             <h3 class="panel-title">Weekly Sales Performance</h3>
-            <p class="panel-desc">Comparative revenue analysis</p>
+            <p class="panel-desc">Análisis de ingresos en tiempo real</p>
           </div>
           <div class="toggle-group">
             <button class="toggle-btn active">Weekly</button>
             <button class="toggle-btn">Monthly</button>
           </div>
         </div>
-        <div class="chart-placeholder">
-          <!-- Fake Chart -->
-          <ul class="bars">
-            <li><span class="day">MON</span></li>
-            <li><span class="day">TUE</span></li>
-            <li><span class="day">WED</span></li>
-            <li><span class="day">THU</span></li>
-            <li class="active-bar">
-              <div class="tooltip">$3.4k</div>
-              <div class="bar-fill"></div>
-              <span class="day">FRI</span>
-            </li>
-            <li><span class="day">SAT</span></li>
-            <li><span class="day">SUN</span></li>
-          </ul>
+        <div class="chart-box">
+          <div *ngIf="chartOptions" style="min-height: 320px;">
+            <apx-chart
+              [series]="chartOptions.series"
+              [chart]="chartOptions.chart"
+              [xaxis]="chartOptions.xaxis"
+              [yaxis]="chartOptions.yaxis"
+              [stroke]="chartOptions.stroke"
+              [colors]="chartOptions.colors"
+              [fill]="chartOptions.fill"
+              [dataLabels]="chartOptions.dataLabels"
+              [grid]="chartOptions.grid"
+              [tooltip]="chartOptions.tooltip">
+            </apx-chart>
+          </div>
         </div>
       </div>
 
-      <!-- Warehouse Entries -->
-      <div class="entries-container box-panel">
+      <!-- Chart 2: Stock Status Distribution -->
+      <div class="chart-container box-panel">
         <div class="panel-header">
-          <h3 class="panel-title-sm">WAREHOUSE ENTRIES</h3>
-          <span class="badge-light">Today</span>
-        </div>
-        
-        <div class="entry-list">
-          <div class="entry-item">
-            <div class="entry-icon"><span nz-icon nzType="car" nzTheme="outline"></span></div>
-            <div class="entry-info">
-              <h4>Beverages Dist. Co.</h4>
-              <p>12 Boxes &bull; Ref: #WR-892</p>
-            </div>
-            <div class="entry-time">09:15 AM</div>
-          </div>
-
-          <div class="entry-item">
-            <div class="entry-icon"><span nz-icon nzType="car" nzTheme="outline"></span></div>
-            <div class="entry-info">
-              <h4>Fresh Produce Ltd.</h4>
-              <p>05 Pallets &bull; Ref: #WR-893</p>
-            </div>
-            <div class="entry-time">11:40 AM</div>
-          </div>
-
-          <div class="entry-item">
-            <div class="entry-icon"><span nz-icon nzType="car" nzTheme="outline"></span></div>
-            <div class="entry-info">
-              <h4>Global Snacks Inc.</h4>
-              <p>22 Units &bull; Ref: #WR-894</p>
-            </div>
-            <div class="entry-time">02:10 PM</div>
+          <div>
+            <h3 class="panel-title">Stock Status</h3>
+            <p class="panel-desc">Distribución del inventario</p>
           </div>
         </div>
-
-        <button class="btn-outline-blue">REGISTER NEW ENTRY</button>
+        <div class="chart-box">
+          <div *ngIf="stockChartOptions" style="min-height: 320px;">
+            <apx-chart
+              [series]="stockChartOptions.series"
+              [chart]="stockChartOptions.chart"
+              [colors]="stockChartOptions.colors"
+              [labels]="stockChartOptions.labels"
+              [legend]="stockChartOptions.legend"
+              [plotOptions]="stockChartOptions.plotOptions"
+              [dataLabels]="stockChartOptions.dataLabels">
+            </apx-chart>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- RECENT TRANSACTIONS -->
-    <div class="transactions-container box-panel">
-      <div class="panel-header" style="margin-bottom: 1.5rem;">
-        <h3 class="panel-title">Recent Transactions</h3>
-        <div class="table-actions">
-          <nz-input-group [nzPrefix]="searchIcon" class="search-input">
-            <input type="text" nz-input placeholder="Busca ventas..." [(ngModel)]="searchQuery" />
-          </nz-input-group>
-          <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
-          
-          <button nz-button class="btn-filter">
-            <span nz-icon nzType="filter"></span> Filter
-          </button>
+    <!-- WAREHOUSE ENTRIES SECTION -->
+    <div class="entries-container box-panel">
+      <div class="panel-header">
+        <h3 class="panel-title-sm">WAREHOUSE ENTRIES</h3>
+        <span class="badge-light">Today</span>
+      </div>
+      
+      <div class="entry-list">
+        <div class="entry-item">
+          <div class="entry-icon"><span nz-icon nzType="car" nzTheme="outline"></span></div>
+          <div class="entry-info">
+            <h4>Beverages Dist. Co.</h4>
+            <p>12 Boxes &bull; Ref: #WR-892</p>
+          </div>
+          <div class="entry-time">09:15 AM</div>
+        </div>
+
+        <div class="entry-item">
+          <div class="entry-icon"><span nz-icon nzType="car" nzTheme="outline"></span></div>
+          <div class="entry-info">
+            <h4>Fresh Produce Ltd.</h4>
+            <p>05 Pallets &bull; Ref: #WR-893</p>
+          </div>
+          <div class="entry-time">11:40 AM</div>
+        </div>
+
+        <div class="entry-item">
+          <div class="entry-icon"><span nz-icon nzType="car" nzTheme="outline"></span></div>
+          <div class="entry-info">
+            <h4>Global Snacks Inc.</h4>
+            <p>22 Units &bull; Ref: #WR-894</p>
+          </div>
+          <div class="entry-time">02:10 PM</div>
         </div>
       </div>
 
-      <nz-table #basicTable [nzData]="transactions" [nzFrontPagination]="false" [nzShowPagination]="false" class="custom-table">
+      <button nz-button nzType="default" nzSize="large" class="w-full" (click)="openProductEntry()">
+        <span nz-icon nzType="plus" nzTheme="outline" class="mr-2"></span>
+        REGISTER NEW ENTRY
+      </button>
+    </div>
+
+    <!-- RECENT TRANSACTIONS SECTION -->
+    <div class="transactions-container box-panel">
+      <div class="panel-header" style="margin-bottom: 1.5rem;">
+        <div>
+          <h3 class="panel-title">Recent Transactions</h3>
+          <p class="panel-desc">Últimas {{ totalSalesCount }} transacciones registradas</p>
+        </div>
+        <div class="table-actions flex gap-md">
+          <nz-input-group [nzPrefix]="searchIcon" class="search-input flex-1">
+            <input type="text" nz-input placeholder="Busca ventas..." [(ngModel)]="searchQuery" (ngModelChange)="onFilterChange()" />
+          </nz-input-group>
+          <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
+          
+          <nz-select 
+            [(ngModel)]="filterType" 
+            (ngModelChange)="applyTypeFilter($event)" 
+            class="btn-filter" 
+            nzPlaceHolder="Método de Pago" 
+            nzAllowClear
+            style="width: 180px;">
+            <nz-option nzValue="null" nzLabel="Todos"></nz-option>
+            <nz-option nzValue="EFECTIVO" nzLabel="💵 Efectivo"></nz-option>
+            <nz-option nzValue="TARJETA" nzLabel="💳 Tarjeta"></nz-option>
+            <nz-option nzValue="TRANSFERENCIA" nzLabel="🔄 Transferencia"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+
+      <nz-table 
+        #basicTable 
+        [nzData]="filteredTransactions" 
+        [nzFrontPagination]="true" 
+        [nzPageSize]="pageSize"
+        [(nzPageIndex)]="pageIndex"
+        [nzLoading]="isLoading"
+        [nzScroll]="{ x: '900px' }"
+        class="custom-table">
         <thead>
           <tr>
-            <th>ID TRANSACTION</th>
-            <th>DATE & TIME</th>
-            <th>CUSTOMER</th>
-            <th>ITEMS</th>
-            <th>TOTAL AMOUNT</th>
-            <th>STATUS</th>
-            <th>ACTION</th>
+            <th nzWidth="15%">ID TRANSACTION</th>
+            <th nzWidth="15%">DATE & TIME</th>
+            <th nzWidth="20%">CUSTOMER</th>
+            <th nzWidth="10%">ITEMS</th>
+            <th nzWidth="15%">TOTAL AMOUNT</th>
+            <th nzWidth="12%">STATUS</th>
+            <th nzWidth="13%">METHOD</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let data of basicTable.data">
-            <td class="font-bold text-blue">{{ data.id }}</td>
+            <td>
+              <span class="font-bold text-primary">{{ data.id }}</span>
+            </td>
             <td>
               <div class="td-stack">
-                <span>{{ data.date.split('•')[0] }}</span>
-                <span>{{ data.date.split('•')[1] }}</span>
+                <span class="text-sm">{{ data.date }}</span>
               </div>
             </td>
-            <td class="font-bold">{{ data.customer }}</td>
-            <td class="text-gray">{{ data.items }}</td>
-            <td class="font-bold">{{ data.amount }}</td>
+            <td>
+              <span class="font-semibold">{{ data.customer }}</span>
+            </td>
+            <td>
+              <span class="text-secondary">{{ data.items }}</span>
+            </td>
+            <td>
+              <span class="font-bold text-success">${{ data.amount | number:'1.2-2' }}</span>
+            </td>
             <td>
               <span class="status-badge" [ngClass]="{'paid': data.status === 'PAID', 'pending': data.status === 'PENDING'}">
-                {{ data.status }}
+                {{ data.status === 'PAID' ? '✓ PAID' : '⏱ PENDING' }}
               </span>
             </td>
             <td>
-              <span nz-icon nzType="more" nzTheme="outline" class="more-icon"></span>
+              <span class="method-badge">{{ data.method }}</span>
             </td>
           </tr>
         </tbody>
       </nz-table>
-      
-      <div class="pagination-footer">
-        <span class="showing-text">SHOWING 4 OF 128 TRANSACTIONS</span>
-        <div class="pagination-controls">
-          <button class="page-btn">&lt;</button>
-          <button class="page-btn active">1</button>
-          <button class="page-btn">2</button>
-          <button class="page-btn">3</button>
-          <button class="page-btn">&gt;</button>
-        </div>
-      </div>
 
+      <div *ngIf="filteredTransactions.length === 0 && !isLoading" class="text-center py-lg text-secondary">
+        <span nz-icon nzType="inbox" nzTheme="outline" class="text-2xl mb-md block"></span>
+        <p>No transactions found</p>
+      </div>
     </div>
 
   </div>

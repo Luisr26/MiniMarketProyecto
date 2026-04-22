@@ -19,6 +19,13 @@
   border: 1px solid #f1f5f9;
 }
 
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
 .form-title {
   font-size: 1.4rem;
   font-weight: 800;
@@ -37,7 +44,7 @@
 .form-badge {
   background: #f0fdf4;
   color: #16a34a;
-  padding: 4px 12px;
+  padding: 4px 14px;
   border-radius: 6px;
   font-size: 0.65rem;
   font-weight: 800;
@@ -55,27 +62,93 @@
 }
 
 .field-item label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.7rem;
   font-weight: 800;
-  color: #64748b;
+  color: #475569;
   margin-bottom: 0.5rem;
   letter-spacing: 0.5px;
 }
 
-::ng-deep .custom-select.ant-select .ant-select-selector,
-::ng-deep .custom-input,
-::ng-deep .custom-date-picker,
-::ng-deep .custom-textarea {
-  background-color: #f8fafc !important;
+.field-icon {
+  font-size: 0.85rem;
+  color: var(--color-primary-dark);
+  opacity: 0.6;
+}
+
+::ng-deep .custom-select.ant-select .ant-select-selector {
+  background-color: #fafbfc !important;
   border: 1px solid #e2e8f0 !important;
-  border-radius: 8px !important;
+  border-radius: 10px !important;
   padding: 4px 12px !important;
+  font-size: 0.85rem !important;
+  height: 44px !important;
+  transition: all 0.2s !important;
+}
+
+::ng-deep .custom-select.ant-select .ant-select-selector:hover {
+  border-color: var(--color-primary-dark) !important;
+}
+
+::ng-deep .custom-select.ant-select-focused .ant-select-selector {
+  border-color: var(--color-primary-dark) !important;
+  box-shadow: 0 0 0 3px rgba(16, 22, 95, 0.08) !important;
+  background: #fff !important;
+}
+
+::ng-deep .custom-input-group .ant-input {
+  background-color: #fafbfc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 10px 12px !important;
   font-size: 0.85rem !important;
 }
 
+::ng-deep .custom-input-group .ant-input:hover {
+  border-color: var(--color-primary-dark) !important;
+}
+
+::ng-deep .custom-input-group .ant-input:focus {
+  border-color: var(--color-primary-dark) !important;
+  box-shadow: 0 0 0 3px rgba(16, 22, 95, 0.08) !important;
+  background: #fff !important;
+}
+
+.unit-suffix {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+::ng-deep .custom-date-picker {
+  border-radius: 10px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #fafbfc !important;
+  height: 44px !important;
+}
+
+::ng-deep .custom-date-picker:hover {
+  border-color: var(--color-primary-dark) !important;
+}
+
 ::ng-deep .custom-textarea {
+  background-color: #fafbfc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
   padding: 12px !important;
+  font-size: 0.85rem !important;
+}
+
+::ng-deep .custom-textarea:hover {
+  border-color: var(--color-primary-dark) !important;
+}
+
+::ng-deep .custom-textarea:focus {
+  border-color: var(--color-primary-dark) !important;
+  box-shadow: 0 0 0 3px rgba(16, 22, 95, 0.08) !important;
+  background: #fff !important;
 }
 
 .form-actions {
@@ -84,6 +157,7 @@
   gap: 1rem;
   border-top: 1px solid #f1f5f9;
   padding-top: 2rem;
+  margin-top: 1.5rem;
 }
 
 .btn-cancel {
@@ -91,7 +165,7 @@
   border: 1px solid #e2e8f0;
   color: #64748b;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 700;
   font-size: 0.8rem;
   cursor: pointer;
@@ -105,7 +179,7 @@
   color: #fff;
   border: none;
   padding: 10px 24px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 700;
   font-size: 0.8rem;
   display: flex;
@@ -142,6 +216,11 @@
   margin: 0;
 }
 
+.log-header-icon {
+  color: #94a3b8;
+  font-size: 1.1rem;
+}
+
 .log-list {
   display: flex;
   flex-direction: column;
@@ -157,10 +236,14 @@
   align-items: center;
   border: 1px solid #f1f5f9;
   box-shadow: 0 2px 10px rgba(0,0,0,0.01);
-  transition: transform 0.2s;
+  transition: all 0.2s;
 }
 
-.log-card:hover { border-color: #cbd5e1; }
+.log-card:hover {
+  border-color: #e0e7ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(16, 22, 95, 0.04);
+}
 
 .log-prod-name {
   font-size: 0.85rem;
@@ -172,7 +255,7 @@
 .log-id {
   font-size: 0.65rem;
   font-weight: 800;
-  color: #3b82f6;
+  color: var(--color-primary-dark);
 }
 
 .log-meta {
@@ -181,6 +264,10 @@
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.dot {
+  font-size: 0.5rem;
 }
 
 .log-card-right {
@@ -199,9 +286,9 @@
 .log-status {
   font-size: 0.6rem;
   font-weight: 800;
-  background: #f1f5f9;
-  color: #64748b;
-  padding: 2px 6px;
+  background: #f0fdf4;
+  color: #16a34a;
+  padding: 2px 8px;
   border-radius: 4px;
 }
 
@@ -220,8 +307,6 @@
 
 .btn-view-logs:hover {
   background: #f8fafc;
-  border-color: #cbd5e1;
+  border-color: var(--color-primary-dark);
+  color: var(--color-primary-dark);
 }
-
-.mb-6 { margin-bottom: 1.5rem; }
-.mt-6 { margin-top: 1.5rem; }

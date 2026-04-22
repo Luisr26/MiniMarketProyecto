@@ -7,6 +7,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { StorageService } from '../../../core/services/storage.service';
+import { ApiService } from '../../../core/services/api.service';
 
 @Component({
   selector: 'app-product-entry',
@@ -24,6 +25,7 @@ export class ProductEntryComponent implements OnInit {
     productId: null,
     supplierId: null,
     quantity: 1,
+    unitCost: 0,
     entryDate: new Date(),
     notes: ''
   };
@@ -35,11 +37,14 @@ export class ProductEntryComponent implements OnInit {
 
   constructor(
     private storageService: StorageService,
+    private apiService: ApiService,
     private message: NzMessageService
   ) {}
 
   ngOnInit() {
-    this.products = this.storageService.getProducts();
+    this.storageService.products$.subscribe(data => {
+      this.products = data;
+    });
     this.suppliers = this.storageService.getSuppliers();
   }
 
@@ -49,15 +54,38 @@ export class ProductEntryComponent implements OnInit {
       return;
     }
 
-    const products = this.storageService.getProducts();
+    // Prepare API payload
+    const entryPayload = {
+      proveedor_id: this.formData.supplierId || 1,
+      items: [{
+        producto_id: this.formData.productId,
+        cantidad: this.formData.quantity,
+        costo_unitario: this.formData.unitCost || 0
+      }]
+    };
+
+    // Call API
+    this.apiService.createInventoryEntry(entryPayload).subscribe((res: any) => {
+      if (res.success) {
+        this.message.success('Entrada registrada en el servidor');
+        this.storageService.reloadFromApi();
+      } else {
+        this.message.warning('Error en servidor. Registrando localmente.');
+        this.localEntry();
+      }
+    });
+
+    this.resetForm();
+  }
+
+  private localEntry() {
+    const products = this.storageService.getProductsValue();
     const productIndex = products.findIndex((p: any) => p.id === this.formData.productId);
 
     if (productIndex > -1) {
-      // Update stock
       products[productIndex].stock += this.formData.quantity;
       this.storageService.saveProducts(products);
 
-      // Add to recent activity simulation
       const productName = products[productIndex].name;
       const supplierName = this.suppliers.find((s: any) => s.id === this.formData.supplierId)?.name || 'Proveedor Genérico';
       
@@ -69,9 +97,6 @@ export class ProductEntryComponent implements OnInit {
         time: 'Justo ahora',
         status: 'COMPLETADO'
       });
-
-      this.message.success(`Registro exitoso: +${this.formData.quantity} unidades de ${productName}`);
-      this.resetForm();
     }
   }
 
@@ -80,6 +105,7 @@ export class ProductEntryComponent implements OnInit {
       productId: null,
       supplierId: null,
       quantity: 1,
+      unitCost: 0,
       entryDate: new Date(),
       notes: ''
     };

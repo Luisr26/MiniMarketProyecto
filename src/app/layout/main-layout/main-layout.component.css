@@ -252,3 +252,15 @@
   padding: 1.5rem 2rem;
   scroll-behavior: smooth;
 }
+
+.qa-btn {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.qa-btn:hover {
+  background: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+}

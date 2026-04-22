@@ -1,0 +1,323 @@
+/* ==================== MODALES Y COMPONENTES GLOBALES ==================== */
+
+/* MODALES MODERNOS CON BACKDROP BLUR */
+::ng-deep .ant-modal {
+  /* Aplicar estilos al contenedor principal del modal */
+}
+
+::ng-deep .ant-modal-content {
+  border-radius: var(--radius-2xl) !important;
+  box-shadow: var(--shadow-premium) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  background-color: var(--color-bg-primary) !important;
+  overflow: hidden;
+}
+
+::ng-deep .ant-modal-mask {
+  backdrop-filter: var(--blur-md) !important;
+  background-color: rgba(16, 22, 95, 0.35) !important;
+  animation: fadeInBlur 250ms ease-in-out;
+}
+
+@keyframes fadeInBlur {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: var(--blur-md);
+  }
+}
+
+/* CABECERA DEL MODAL */
+::ng-deep .ant-modal-header {
+  border-bottom: 1px solid var(--color-border-light) !important;
+  padding: var(--spacing-lg) !important;
+  background-color: var(--color-bg-primary) !important;
+}
+
+::ng-deep .ant-modal-title {
+  font-family: var(--font-family-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary) !important;
+}
+
+/* CUERPO DEL MODAL */
+::ng-deep .ant-modal-body {
+  padding: var(--spacing-xl) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* PIE DEL MODAL */
+::ng-deep .ant-modal-footer {
+  border-top: 1px solid var(--color-border-light) !important;
+  padding: var(--spacing-lg) !important;
+  background-color: var(--color-bg-secondary) !important;
+}
+
+/* BOTÓN DE CERRAR */
+::ng-deep .ant-modal-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+::ng-deep .ant-modal-close:hover {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-danger);
+}
+
+/* ==================== INPUTS Y FORMULARIOS ==================== */
+
+::ng-deep .ant-input,
+::ng-deep .ant-input-number,
+::ng-deep .ant-select-selector {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--color-border-light) !important;
+  padding: 8px 12px !important;
+  font-family: var(--font-family-base);
+  transition: all var(--transition-base);
+}
+
+::ng-deep .ant-input:focus,
+::ng-deep .ant-input-number:focus,
+::ng-deep .ant-select-focused .ant-select-selector {
+  border-color: var(--color-primary-mid) !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+::ng-deep .ant-input-status-error,
+::ng-deep .ant-input.ant-input-status-error {
+  border-color: var(--color-danger) !important;
+}
+
+/* ==================== BOTONES ==================== */
+
+::ng-deep .ant-btn {
+  border-radius: var(--radius-md) !important;
+  font-weight: 600;
+  font-family: var(--font-family-base);
+  transition: all var(--transition-base);
+  border: none;
+  height: 36px;
+  padding: 0 16px;
+}
+
+::ng-deep .ant-btn-primary {
+  background-color: var(--color-primary-mid) !important;
+  color: white !important;
+}
+
+::ng-deep .ant-btn-primary:hover {
+  background-color: var(--color-primary-dark) !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+::ng-deep .ant-btn-default {
+  border: 1px solid var(--color-border-light) !important;
+  color: var(--color-text-primary) !important;
+  background-color: var(--color-bg-primary) !important;
+}
+
+::ng-deep .ant-btn-default:hover {
+  border-color: var(--color-primary-mid) !important;
+  color: var(--color-primary-mid) !important;
+}
+
+::ng-deep .ant-btn-dangerous {
+  background-color: var(--color-danger) !important;
+  color: white !important;
+}
+
+::ng-deep .ant-btn-dangerous:hover {
+  background-color: #d93c3c !important;
+}
+
+::ng-deep .ant-btn-ghost {
+  background-color: transparent;
+  border: 1px solid var(--color-border-light) !important;
+}
+
+/* ==================== TABLAS ==================== */
+
+::ng-deep .ant-table {
+  font-family: var(--font-family-base);
+}
+
+::ng-deep .ant-table-thead > tr > th {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border-light) !important;
+}
+
+::ng-deep .ant-table-tbody > tr {
+  transition: background-color var(--transition-fast);
+}
+
+::ng-deep .ant-table-tbody > tr:hover {
+  background-color: var(--color-bg-secondary) !important;
+}
+
+::ng-deep .ant-table-bordered > thead > tr > th,
+::ng-deep .ant-table-bordered > tbody > tr > td {
+  border-color: var(--color-border-light) !important;
+}
+
+/* ==================== DROPDOWN Y MENÚS ==================== */
+
+::ng-deep .ant-dropdown-menu {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border: 1px solid var(--color-border-light) !important;
+}
+
+::ng-deep .ant-dropdown-menu-item {
+  border-radius: 0;
+  padding: 8px 12px !important;
+  transition: background-color var(--transition-fast);
+}
+
+::ng-deep .ant-dropdown-menu-item:hover {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-primary-mid) !important;
+}
+
+::ng-deep .ant-menu {
+  border: none;
+  background-color: var(--color-bg-primary);
+}
+
+::ng-deep .ant-menu-item {
+  border-radius: var(--radius-md);
+  margin: 4px 0;
+}
+
+/* ==================== NOTIFICACIONES Y ALERTS ==================== */
+
+::ng-deep .ant-message-success,
+::ng-deep .ant-notification-notice-success {
+  border-radius: var(--radius-lg) !important;
+}
+
+::ng-deep .ant-alert {
+  border-radius: var(--radius-lg) !important;
+  border: none;
+}
+
+::ng-deep .ant-alert-success {
+  background-color: rgba(40, 199, 111, 0.1) !important;
+  color: var(--color-success) !important;
+}
+
+::ng-deep .ant-alert-warning {
+  background-color: rgba(255, 159, 67, 0.1) !important;
+  color: var(--color-warning) !important;
+}
+
+::ng-deep .ant-alert-error {
+  background-color: rgba(234, 84, 85, 0.1) !important;
+  color: var(--color-danger) !important;
+}
+
+/* ==================== TARJETAS Y CONTENEDORES ==================== */
+
+.card {
+  background-color: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-soft);
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-secondary);
+}
+
+.card-elevated {
+  box-shadow: var(--shadow-lg);
+}
+
+.card-compact {
+  padding: var(--spacing-md);
+}
+
+.card-outline {
+  border: 2px solid var(--color-border-light);
+  box-shadow: none;
+}
+
+/* ==================== PAGINACIÓN ==================== */
+
+::ng-deep .ant-pagination-item {
+  border-radius: var(--radius-sm) !important;
+  border-color: var(--color-border-light) !important;
+}
+
+::ng-deep .ant-pagination-item-active {
+  background-color: var(--color-primary-mid) !important;
+  border-color: var(--color-primary-mid) !important;
+}
+
+::ng-deep .ant-pagination-item-active a {
+  color: white !important;
+}
+
+/* ==================== SELECTS Y AUTOCOMPLETE ==================== */
+
+::ng-deep .ant-select-selector {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--color-border-light) !important;
+}
+
+::ng-deep .ant-select-item {
+  border-radius: var(--radius-sm);
+  padding: 6px 12px !important;
+}
+
+::ng-deep .ant-select-item-option:hover {
+  background-color: var(--color-bg-secondary) !important;
+}
+
+/* ==================== BADGES Y ETIQUETAS ==================== */
+
+::ng-deep .ant-tag {
+  border-radius: var(--radius-md) !important;
+  border: none;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+::ng-deep .ant-tag-success {
+  background-color: rgba(40, 199, 111, 0.15) !important;
+  color: var(--color-success) !important;
+}
+
+::ng-deep .ant-tag-warning {
+  background-color: rgba(255, 159, 67, 0.15) !important;
+  color: var(--color-warning) !important;
+}
+
+::ng-deep .ant-tag-error {
+  background-color: rgba(234, 84, 85, 0.15) !important;
+  color: var(--color-danger) !important;
+}
+
+/* ==================== SKELETONS Y LOADERS ==================== */
+
+::ng-deep .ant-skeleton {
+  padding: 0;
+}
+
+::ng-deep .ant-skeleton-element {
+  border-radius: var(--radius-md);
+}

@@ -8,45 +8,41 @@
     </div>
 
     <ul class="sidebar-menu">
-      <li class="menu-item" [routerLink]="role === 'admin' ? '/admin' : '/bodeguero'" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      <li class="menu-item" [routerLink]="(simulatedRole === 'admin') ? '/admin' : '/bodeguero'" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <span nz-icon nzType="appstore" nzTheme="outline"></span>
         <span class="menu-text">DASHBOARD</span>
       </li>
-      <li class="menu-item" *ngIf="role === 'admin'" routerLink="/admin/pos" routerLinkActive="active">
+      <li class="menu-item" *ngIf="simulatedRole === 'admin'" routerLink="/admin/pos" routerLinkActive="active">
         <span nz-icon nzType="shop" nzTheme="outline"></span>
         <span class="menu-text">POS</span>
       </li>
-      <li class="menu-item" [routerLink]="role === 'admin' ? '/admin/inventory' : '/bodeguero/inventory'" routerLinkActive="active">
+      <li class="menu-item" [routerLink]="(simulatedRole === 'admin') ? '/admin/inventory' : '/bodeguero/inventory'" routerLinkActive="active">
         <span nz-icon nzType="inbox" nzTheme="outline"></span>
         <span class="menu-text">INVENTORY</span>
       </li>
-      <li class="menu-item" *ngIf="role === 'admin'" routerLink="/admin/suppliers" routerLinkActive="active">
+      <li class="menu-item" *ngIf="simulatedRole === 'admin'" routerLink="/admin/suppliers" routerLinkActive="active">
         <span nz-icon nzType="car" nzTheme="outline"></span>
         <span class="menu-text">SUPPLIERS</span>
       </li>
-      <li class="menu-item" *ngIf="role === 'admin'" routerLink="/admin/users" routerLinkActive="active">
+      <li class="menu-item" *ngIf="simulatedRole === 'admin'" routerLink="/admin/users" routerLinkActive="active">
         <span nz-icon nzType="team" nzTheme="outline"></span>
         <span class="menu-text">USERS</span>
       </li>
-      <li class="menu-item" *ngIf="role === 'admin'" routerLink="/admin/reports" routerLinkActive="active">
+      <li class="menu-item" *ngIf="simulatedRole === 'admin'" routerLink="/admin/reports" routerLinkActive="active">
         <span nz-icon nzType="bar-chart" nzTheme="outline"></span>
         <span class="menu-text">REPORTS</span>
       </li>
-      <li class="menu-item" [routerLink]="role === 'admin' ? '/admin/product-entry' : '/bodeguero/product-entry'" routerLinkActive="active">
+      <li class="menu-item" [routerLink]="(simulatedRole === 'admin') ? '/admin/product-entry' : '/bodeguero/product-entry'" routerLinkActive="active">
         <span nz-icon nzType="plus-square" nzTheme="outline"></span>
         <span class="menu-text">PRODUCT ENTRY</span>
       </li>
-      <li class="menu-item" [routerLink]="role === 'admin' ? '/admin/history' : '/bodeguero/history'" routerLinkActive="active">
+      <li class="menu-item" [routerLink]="(simulatedRole === 'admin') ? '/admin/history' : '/bodeguero/history'" routerLinkActive="active">
         <span nz-icon nzType="history" nzTheme="outline"></span>
         <span class="menu-text">HISTORY</span>
       </li>
     </ul>
 
     <div class="sidebar-footer">
-      <button *ngIf="role === 'admin'" class="btn-new-sale">
-        <span nz-icon nzType="plus" nzTheme="outline"></span> New Sale
-      </button>
-
       <ul class="sidebar-bottom-menu">
         <li class="menu-item menu-item-small">
           <span nz-icon nzType="question-circle" nzTheme="outline"></span>
@@ -66,10 +62,41 @@
     <header class="top-navbar">
       <div class="navbar-left">
         <div class="search-container">
-          <nz-input-group [nzPrefix]="prefixSearch" class="global-navbar-search">
-            <input type="text" nz-input placeholder="Búsqueda global..." [(ngModel)]="searchQuery" (keydown.enter)="onSearch()" />
+          <nz-input-group [nzPrefix]="prefixSearch" 
+                          nz-dropdown 
+                          [nzDropdownMenu]="searchMenu" 
+                          [nzTrigger]="'click'" 
+                          [nzVisible]="isSearchVisible"
+                          class="global-navbar-search">
+            <input type="text" nz-input 
+                   placeholder="Búsqueda global..." 
+                   [(ngModel)]="searchQuery" 
+                   (ngModelChange)="onGlobalSearchChange($event)" />
           </nz-input-group>
           <ng-template #prefixSearch><span nz-icon nzType="search"></span></ng-template>
+
+          <nz-dropdown-menu #searchMenu="nzDropdownMenu">
+            <ul nz-menu class="search-results-menu max-h-96 overflow-y-auto w-80 shadow-2xl rounded-xl border border-gray-100">
+              <li nz-menu-item *ngFor="let res of searchResults$ | async" (click)="goToResult(res)" class="p-4 hover:bg-gray-50 border-b border-gray-50 last:border-0 transition-all">
+                <div class="flex items-center gap-3">
+                  <div class="result-icon w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-50 text-indigo-600">
+                    <span nz-icon [nzType]="res.source === 'Inventario' ? 'inbox' : res.source === 'Proveedores' ? 'car' : res.source === 'Usuarios' ? 'team' : 'file-text'"></span>
+                  </div>
+                  <div class="flex-1">
+                    <div class="text-sm font-bold text-gray-900">{{ res.title }}</div>
+                    <div class="text-xs text-gray-400 mt-0.5">{{ res.subtitle }}</div>
+                  </div>
+                  <div class="source-badge px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-500">
+                    {{ res.source.toUpperCase() }}
+                  </div>
+                </div>
+              </li>
+              <li nz-menu-item *ngIf="(searchResults$ | async)?.length === 0 && searchQuery" class="p-6 text-center text-gray-400">
+                <span nz-icon nzType="frown" class="text-2xl mb-2 block"></span>
+                No se encontraron resultados para "{{ searchQuery }}"
+              </li>
+            </ul>
+          </nz-dropdown-menu>
         </div>
       </div>
 
@@ -81,10 +108,25 @@
         
         <span nz-icon nzType="setting" nzTheme="outline" class="nav-icon ml-4"></span>
         
+        <!-- Role Switcher for QA -->
+        <div class="qa-switcher ml-4" *ngIf="role === 'qa'">
+          <button nz-button nz-dropdown [nzDropdownMenu]="qaMenu" nzType="default" class="qa-btn">
+            <span nz-icon nzType="swap" nzTheme="outline"></span>
+            Simular: {{ simulatedRole.toUpperCase() }}
+          </button>
+          <nz-dropdown-menu #qaMenu="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item (click)="switchSimulatedRole('admin')">Vista Admin</li>
+              <li nz-menu-item (click)="switchSimulatedRole('bodeguero')">Vista Bodeguero</li>
+              <li nz-menu-item (click)="switchSimulatedRole('cajero')">Vista Cajero</li>
+            </ul>
+          </nz-dropdown-menu>
+        </div>
+
         <div class="user-pill ml-4">
           <div class="user-details">
             <span class="pill-name">{{ userName }}</span>
-            <span class="pill-role">{{ role.toUpperCase() }}</span>
+            <span class="pill-role">{{ (role === 'qa' ? 'QA: ' + simulatedRole : role).toUpperCase() }}</span>
           </div>
           <div class="pill-avatar"></div>
         </div>

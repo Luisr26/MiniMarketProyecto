@@ -4,18 +4,32 @@
   <div class="inv-toolbar">
     <div class="search-box">
       <nz-input-group [nzPrefix]="searchIcon" class="inv-search-input">
-        <input type="text" nz-input placeholder="Search product name, SKU or supplier..." [(ngModel)]="searchQuery" />
+        <input type="text" nz-input placeholder="Buscar por nombre, SKU o proveedor..." [(ngModel)]="searchQuery" (ngModelChange)="currentPage = 1" />
       </nz-input-group>
       <ng-template #searchIcon><span nz-icon nzType="search"></span></ng-template>
     </div>
-    <div class="toolbar-actions">
-      <button class="btn-filters">
-        <span nz-icon nzType="filter" nzTheme="outline"></span> Filters
-      </button>
-      <button class="btn-create" (click)="openCreateModal()">
-        <span nz-icon nzType="plus" nzTheme="outline"></span> Crear Producto
-      </button>
+    <div class="toolbar-filters">
+      <div class="filter-chip">
+        <span nz-icon nzType="appstore" nzTheme="outline" class="chip-icon"></span>
+        <nz-select [(ngModel)]="categoryFilter" nzBorderless nzPlaceHolder="Categoría" (ngModelChange)="currentPage = 1" class="chip-select">
+          <nz-option nzValue="Todas" nzLabel="Todas las categorías"></nz-option>
+          <nz-option *ngFor="let cat of categories" [nzValue]="cat" [nzLabel]="cat"></nz-option>
+        </nz-select>
+      </div>
+
+      <div class="filter-chip">
+        <span nz-icon nzType="filter" nzTheme="outline" class="chip-icon"></span>
+        <nz-select [(ngModel)]="statusFilter" nzBorderless nzPlaceHolder="Estado" (ngModelChange)="currentPage = 1" class="chip-select">
+          <nz-option nzValue="Todos" nzLabel="Todos los estados"></nz-option>
+          <nz-option nzValue="Crítico" nzLabel="🔴 Stock Crítico"></nz-option>
+          <nz-option nzValue="Agotado" nzLabel="⚫ Agotado"></nz-option>
+          <nz-option nzValue="Buen Stock" nzLabel="🟢 Buen Stock"></nz-option>
+        </nz-select>
+      </div>
     </div>
+    <button class="btn-create" (click)="openCreateModal()">
+      <span nz-icon nzType="plus" nzTheme="outline"></span> Nuevo Producto
+    </button>
   </div>
 
   <!-- TABLE -->
@@ -23,17 +37,17 @@
     <table class="inv-table">
       <thead>
         <tr>
-          <th>PRODUCT NAME</th>
-          <th>SELLING PRICE</th>
-          <th>DISCOUNT %</th>
-          <th>FINAL PRICE</th>
+          <th>PRODUCTO</th>
+          <th>PRECIO VENTA</th>
+          <th>DESCUENTO</th>
+          <th>PRECIO FINAL</th>
           <th>STOCK</th>
-          <th>SUPPLIER</th>
-          <th>ACTIONS</th>
+          <th>PROVEEDOR</th>
+          <th class="th-actions">ACCIONES</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let p of paginatedProducts">
+        <tr *ngFor="let p of paginatedProducts" class="table-row-hover">
           <td>
             <div class="prod-name">{{ p.name }}</div>
             <div class="prod-sku">SKU: {{ p.sku }}</div>
@@ -43,20 +57,25 @@
             <span class="discount-badge" *ngIf="p.discountPercent > 0" [ngClass]="p.discountPercent >= 10 ? 'disc-high' : 'disc-low'">
               {{ p.discountPercent }}%
             </span>
-            <span class="no-discount" *ngIf="p.discountPercent === 0">-</span>
+            <span class="no-discount" *ngIf="p.discountPercent === 0">—</span>
           </td>
           <td class="cell-final">${{ p.finalPrice | number:'1.2-2' }}</td>
           <td class="cell-stock">
-            <span class="stock-indicator" [ngClass]="getStockClass(p.stock)">{{ p.stock }}</span>
+            <div class="stock-pill" [ngClass]="getStockClass(p.stock)">
+              <span class="stock-dot"></span>
+              {{ p.stock }} uds
+            </div>
           </td>
           <td class="cell-supplier">{{ p.supplier }}</td>
           <td class="cell-actions">
-            <button class="action-btn" title="Edit" (click)="openEditModal(p)">
-              <span nz-icon nzType="edit" nzTheme="outline"></span>
-            </button>
-            <button class="action-btn action-delete" title="Delete" (click)="deleteProduct(p)">
-              <span nz-icon nzType="delete" nzTheme="outline"></span>
-            </button>
+            <div class="actions-group">
+              <button class="action-btn action-edit" title="Editar producto" (click)="openEditModal(p)">
+                <span nz-icon nzType="edit" nzTheme="outline"></span>
+              </button>
+              <button class="action-btn action-delete" title="Eliminar producto" (click)="confirmDelete(p)">
+                <span nz-icon nzType="delete" nzTheme="outline"></span>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -65,7 +84,7 @@
 
   <!-- PAGINATION -->
   <div class="inv-pagination">
-    <span class="page-info">Showing {{ paginatedProducts.length }} of {{ filteredProducts.length }} products</span>
+    <span class="page-info">Mostrando {{ paginatedProducts.length }} de {{ filteredProducts.length }} productos</span>
     <div class="page-controls">
       <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">&lt;</button>
       <button
@@ -80,77 +99,126 @@
   </div>
 </div>
 
-<!-- ============ MODAL CREAR/EDITAR PRODUCTO ============ -->
+<!-- ============ MODAL REDISEÑADO CON NG-ZORRO ============ -->
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
-  [nzFooter]="null"
-  [nzClosable]="false"
-  [nzBodyStyle]="{ padding: '0', borderRadius: '12px' }"
-  nzWidth="560px"
-  nzCentered>
-  <ng-container *nzModalContent>
-    <div class="create-modal">
-      <div class="cm-header">
-        <div>
-          <h3 class="cm-title">{{ isEditMode ? 'Actualizar Producto' : 'Crear Producto' }}</h3>
-          <p class="cm-subtitle">{{ isEditMode ? 'UPDATE CATALOG ENTRY' : 'NEW CATALOG ENTRY' }}</p>
-        </div>
-        <span nz-icon nzType="close" class="cm-close" (click)="closeCreateModal()"></span>
-      </div>
-
-      <div class="cm-body">
-        <!-- Product Name -->
-        <div class="cm-field full">
-          <label>PRODUCT NAME</label>
-          <input type="text" [(ngModel)]="newProduct.name" placeholder="e.g. Harina de Trigo 000" />
-        </div>
-
-        <!-- Row: Price + Discount -->
-        <div class="cm-row">
-          <div class="cm-field">
-            <label>SELLING PRICE ($)</label>
-            <input type="number" [(ngModel)]="newProduct.sellingPrice" placeholder="0.00" />
-          </div>
-          <div class="cm-field">
-            <label>DISCOUNT %</label>
-            <input type="number" [(ngModel)]="newProduct.discountPercent" placeholder="0" />
-          </div>
-        </div>
-
-        <!-- Row: Stock + Supplier -->
-        <div class="cm-row">
-          <div class="cm-field">
-            <label>{{ isEditMode ? 'CURRENT STOCK' : 'INITIAL STOCK' }}</label>
-            <input type="number" [(ngModel)]="newProduct.initialStock" placeholder="0" />
-          </div>
-          <div class="cm-field">
-            <label>SUPPLIER</label>
-            <select [(ngModel)]="newProduct.supplier">
-              <option value="" disabled>Select Supplier</option>
-              <option *ngFor="let s of suppliers" [value]="s">{{ s }}</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Row: SKU + Category -->
-        <div class="cm-row">
-          <div class="cm-field">
-            <label>SKU CODE</label>
-            <input type="text" [(ngModel)]="newProduct.skuCode" placeholder="ML-XXXXX" />
-          </div>
-          <div class="cm-field">
-            <label>CATEGORY</label>
-            <select [(ngModel)]="newProduct.category">
-              <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="cm-footer">
-        <button class="btn-cancel-modal" (click)="closeCreateModal()">Cancel</button>
-        <button class="btn-save-modal" (click)="saveProduct()">{{ isEditMode ? 'Actualizar Producto' : 'Guardar Producto' }}</button>
+  [nzTitle]="modalTitle"
+  [nzFooter]="modalFooter"
+  [nzClosable]="true"
+  nzWidth="50vw"
+  nzCentered
+  (nzOnCancel)="closeCreateModal()">
+  
+  <ng-template #modalTitle>
+    <div class="modal-header-p">
+      <span nz-icon [nzType]="isEditMode ? 'edit' : 'plus-circle'" nzTheme="outline" class="m-icon"></span>
+      <div class="m-text">
+        <div class="m-title">{{ isEditMode ? 'Actualizar Producto' : 'Nuevo Producto' }}</div>
+        <div class="m-subtitle">Gestión de catálogo de inventario</div>
       </div>
     </div>
+  </ng-template>
+
+  <ng-container *nzModalContent>
+    <form nz-form nzLayout="vertical" class="compact-form">
+      <div nz-row [nzGutter]="16">
+        <!-- Nombre -->
+        <div nz-col [nzSpan]="16">
+          <nz-form-item>
+            <nz-form-label nzRequired>Nombre del Producto</nz-form-label>
+            <nz-form-control nzErrorTip="Por favor ingrese el nombre">
+              <input nz-input [(ngModel)]="newProduct.name" name="name" placeholder="Ej: Arroz Integral 1kg" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <!-- SKU -->
+        <div nz-col [nzSpan]="8">
+          <nz-form-item>
+            <nz-form-label>Código SKU</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="newProduct.skuCode" name="sku" placeholder="ML-XXXXX" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="16">
+        <!-- Precio -->
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>Precio Venta ($)</nz-form-label>
+            <nz-form-control>
+              <nz-input-group nzPrefix="$">
+                <input nz-input type="number" [(ngModel)]="newProduct.sellingPrice" name="price" placeholder="0.00" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <!-- Descuento -->
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label>Descuento %</nz-form-label>
+            <nz-form-control>
+              <nz-input-group nzSuffix="%">
+                <input nz-input type="number" [(ngModel)]="newProduct.discountPercent" name="discount" placeholder="0" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="16">
+        <!-- Stock -->
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label>{{ isEditMode ? 'Stock Actual' : 'Stock Inicial' }}</nz-form-label>
+            <nz-form-control>
+              <input nz-input type="number" [(ngModel)]="newProduct.initialStock" name="stock" placeholder="0" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <!-- Proveedor -->
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label>Proveedor</nz-form-label>
+            <nz-form-control>
+              <nz-select [(ngModel)]="newProduct.supplier" name="supplier" nzPlaceHolder="Seleccionar">
+                <nz-option *ngFor="let s of suppliers" [nzValue]="s" [nzLabel]="s"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="16">
+        <!-- Categoría -->
+        <div nz-col [nzSpan]="10">
+          <nz-form-item>
+            <nz-form-label>Categoría</nz-form-label>
+            <nz-form-control>
+              <nz-select [(ngModel)]="newProduct.category" name="category">
+                <nz-option *ngFor="let c of categories" [nzValue]="c" [nzLabel]="c"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <!-- Imagen -->
+        <div nz-col [nzSpan]="14">
+          <nz-form-item>
+            <nz-form-label>URL de Imagen</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="newProduct.imageUrl" name="image" placeholder="https://..." />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
   </ng-container>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="closeCreateModal()">Cancelar</button>
+    <button nz-button nzType="primary" (click)="saveProduct()" [nzLoading]="false" class="btn-save-nz">
+      {{ isEditMode ? 'Actualizar Producto' : 'Guardar Producto' }}
+    </button>
+  </ng-template>
 </nz-modal>
